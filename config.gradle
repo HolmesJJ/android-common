@@ -1,0 +1,48 @@
+ext {
+    plugins = [
+            library    : 'com.android.library',
+            application: 'com.android.application',
+    ]
+
+    android = [
+            applicationId    : "com.example.subtitletool",
+            compileSdkVersion: 31,
+            minSdkVersion    : 24,
+            targetSdkVersion : 31,
+            checkStyleVersion: '9.2',
+    ]
+
+    dependVersion = [
+            appcompat            : '1.4.0',
+            google_material      : '1.4.0',
+            constraint_layout    : '2.1.2',
+            lifecycle_version    : '2.4.0',
+            arch_version         : "2.1.0",
+    ]
+
+    dependencies = [
+            // test
+            "junit"                      : "junit:junit:4.13.2",
+            "test-ext"                   : "androidx.test.ext:junit:1.1.3",
+            "espresso-core"              : "androidx.test.espresso:espresso-core:3.4.0",
+
+            // support
+            "appcompat"                  : "androidx.appcompat:appcompat:$dependVersion.appcompat",
+            "google-material"            : "com.google.android.material:material:$dependVersion.google_material",
+            "constraint-layout"          : "androidx.constraintlayout:constraintlayout:$dependVersion.constraint_layout",
+
+            // permission
+            "easypermissions"            : "pub.devrel:easypermissions:3.0.0",
+
+            // lifecycle
+            "lifecycle-viewmodel"        : "androidx.lifecycle:lifecycle-viewmodel:$dependVersion.lifecycle_version",
+            "lifecycle-livedata"         : "androidx.lifecycle:lifecycle-livedata:$dependVersion.lifecycle_version",
+            "lifecycle-runtime"          : "androidx.lifecycle:lifecycle-runtime:$dependVersion.lifecycle_version",
+            "lifecycle-common-java8"     : "androidx.lifecycle:lifecycle-common-java8:$dependVersion.lifecycle_version",
+            "lifecycle-reactivestreams"  : "androidx.lifecycle:lifecycle-reactivestreams:$dependVersion.lifecycle_version",
+            "arch-core-testing"          : "androidx.arch.core:core-testing:$dependVersion.arch_version",
+
+            // fastjson
+            "fastjson"                   : "com.alibaba:fastjson:1.1.72.android",
+    ]
+}

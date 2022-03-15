@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">common</string>
+
+    <string name="exit_app_str">Press Again to Exit</string>
+
+    <string name="rationale_init">APP Needs some Permission</string>
+    <string name="permissions_denied_content_str">Permission Denied \nOpen Setting to Modify APP Permission</string>
+    <string name="need_permissions_str">Permission Required</string>
+
+    <string name="loading_tips">Loading…</string>
 </resources>
