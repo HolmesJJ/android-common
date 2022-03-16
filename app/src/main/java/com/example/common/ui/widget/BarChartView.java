@@ -84,7 +84,7 @@ public class BarChartView extends View {
         mTextHeight = (int) Math.ceil(fm.descent - fm.ascent);
     }
 
-    //画图
+    // 画图
     @Override
     protected void onDraw(Canvas canvas) {
         mWidth = getWidth();
@@ -93,19 +93,22 @@ public class BarChartView extends View {
         // 条形背景
         canvas.drawRoundRect(0, 0, mWidth, mHeight, mCornerRadius, mCornerRadius, mBarPaintBg);
 
+        // 字体
+        String txt = mProgress + "%";
+        mTextWidth = mTextPaint.measureText(txt, 0, txt.length());
+        int padding = 20;
+
         // 条形
         if (mProgress > 0) {
             float mProgressWidth = ((float) mProgress / mTotalProgress);
             canvas.drawRoundRect(0, 0, mProgressWidth, mHeight, mCornerRadius, mCornerRadius, mBarPaint);
-            // 字体
-            String txt = mProgress + "%";
-            mTextWidth = mTextPaint.measureText(txt, 0, txt.length());
-            int padding = 20;
             if (mProgressWidth / 2 - mTextWidth / 2 > padding) {
                 canvas.drawText(txt, mProgressWidth / 2 - mTextWidth / 2, mHeight / 2 + mTextHeight / 4, mTextPaint);
             } else {
                 canvas.drawText(txt, padding, mHeight / 2 + mTextHeight / 4, mTextPaint);
             }
+        } else {
+            canvas.drawText(txt, padding, mHeight / 2 + mTextHeight / 4, mTextPaint);
         }
     }
 

@@ -100,7 +100,7 @@ public class DonutChartView extends View {
         mTextHeight = (int) Math.ceil(fm.descent - fm.ascent);
     }
 
-    //画图
+    // 画图
     @Override
     protected void onDraw(Canvas canvas) {
         mXCenter = getWidth() / 2;
@@ -127,12 +127,12 @@ public class DonutChartView extends View {
             oval.right = mRingRadius * 2 + (mXCenter - mRingRadius);
             oval.bottom = mRingRadius * 2 + (mYCenter - mRingRadius);
             canvas.drawArc(oval, -90, ((float) mProgress / mTotalProgress) * 360, false, mRingPaint);
-
-            // 字体
-            String txt = mProgress + "%";
-            mTextWidth = mTextPaint.measureText(txt, 0, txt.length());
-            canvas.drawText(txt, mXCenter - mTextWidth / 2, mYCenter + mTextHeight / 4, mTextPaint);
         }
+
+        // 字体
+        String txt = mProgress + "%";
+        mTextWidth = mTextPaint.measureText(txt, 0, txt.length());
+        canvas.drawText(txt, mXCenter - mTextWidth / 2, mYCenter + mTextHeight / 4, mTextPaint);
     }
 
     // 设置进度
