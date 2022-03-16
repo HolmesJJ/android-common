@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -342,7 +344,7 @@ public abstract class BaseConnection {
         }
     }
 
-    //读取请求头
+    // 读取请求头
     private String getRequestHeader(HttpURLConnection conn) {
         Map<String, List<String>> requestHeaderMap = conn.getRequestProperties();
         Iterator<String> requestHeaderIterator = requestHeaderMap.keySet().iterator();
@@ -356,6 +358,27 @@ public abstract class BaseConnection {
             sbRequestHeader.append("\n");
         }
         return sbRequestHeader.toString();
+    }
+
+    // 使用表单提交时，读取请求体
+    private String getBody(HashMap<String, String> params) {
+        StringBuilder result = new StringBuilder();
+        try {
+            boolean first = true;
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (first) {
+                    first = false;
+                } else {
+                    result.append("&");
+                }
+                result.append(URLEncoder.encode(entry.getKey(), HTTP_REQ_VALUE_CHARSET));
+                result.append("=");
+                result.append(URLEncoder.encode(entry.getValue(), HTTP_REQ_VALUE_CHARSET));
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return result.toString();
     }
 
     /**
