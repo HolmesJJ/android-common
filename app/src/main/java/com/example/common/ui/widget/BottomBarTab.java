@@ -56,7 +56,7 @@ public class BottomBarTab extends FrameLayout {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
         mIcon.setImageResource(icon);
         mIcon.setLayoutParams(params);
-        mIcon.setColorFilter(ContextCompat.getColor(context, R.color.silver));
+        mIcon.setColorFilter(ContextCompat.getColor(context, R.color.FFBFBFBF));
         lLContainer.addView(mIcon);
 
         mTvTitle = new TextView(context);
@@ -64,7 +64,7 @@ public class BottomBarTab extends FrameLayout {
         LinearLayout.LayoutParams paramsTv = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         paramsTv.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
         mTvTitle.setTextSize(10);
-        mTvTitle.setTextColor(ContextCompat.getColor(context, R.color.silver));
+        mTvTitle.setTextColor(ContextCompat.getColor(context, R.color.FFBFBFBF));
         mTvTitle.setLayoutParams(paramsTv);
         lLContainer.addView(mTvTitle);
 
@@ -92,11 +92,11 @@ public class BottomBarTab extends FrameLayout {
     public void setSelected(boolean selected) {
         super.setSelected(selected);
         if (selected) {
-            mIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.light_green));
-            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.light_green));
+            mIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.FFB5C4B1));
+            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.FFB5C4B1));
         } else {
-            mIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.silver));
-            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.silver));
+            mIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.FFBFBFBF));
+            mTvTitle.setTextColor(ContextCompat.getColor(mContext, R.color.FFBFBFBF));
         }
     }
 
