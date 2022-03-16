@@ -8,4 +8,8 @@
     <string name="need_permissions_str">Permission Required</string>
 
     <string name="loading_tips">Loading…</string>
+
+    <string name="action_confirm">Confirm</string>
+
+    <string name="copy_success">Copy Success</string>
 </resources>
