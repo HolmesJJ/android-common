@@ -8,7 +8,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.common.MainActivity;
 import com.example.common.base.BaseActivity;
 import com.example.common.base.BaseViewModel;
+import com.example.common.config.Config;
 import com.example.common.thread.ThreadManager;
+import com.example.common.ui.activity.LoginActivity;
 
 public class InitViewModel extends BaseViewModel {
 
@@ -43,7 +45,11 @@ public class InitViewModel extends BaseViewModel {
         ThreadManager.getThreadPollProxy().execute(new Runnable() {
             @Override
             public void run() {
-                mActivityAction.postValue(MainActivity.class);
+                if (Config.isLogin()) {
+                    mActivityAction.postValue(MainActivity.class);
+                } else {
+                    mActivityAction.postValue(LoginActivity.class);
+                }
             }
         });
     }
