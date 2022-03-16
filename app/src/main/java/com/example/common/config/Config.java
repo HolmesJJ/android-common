@@ -7,7 +7,7 @@ public final class Config {
 
     public static final String SETTING_CONFIG = "SettingConfig";
 
-    private static SpUtils sSp = SpUtils.getInstance(SETTING_CONFIG);
+    private final static SpUtils SP = SpUtils.getInstance(SETTING_CONFIG);
 
     private static boolean sIsLogin;
     private static int sUserId;
@@ -21,7 +21,7 @@ public final class Config {
     }
 
     public static void setLogin(boolean isLogin) {
-        sSp.put(SpUtilKeyConstants.IS_LOGIN, isLogin);
+        SP.put(SpUtilKeyConstants.IS_LOGIN, isLogin);
         sIsLogin = isLogin;
     }
 
@@ -30,7 +30,7 @@ public final class Config {
     }
 
     public static void setUserId(int userId) {
-        sSp.put(SpUtilKeyConstants.USER_ID, userId);
+        SP.put(SpUtilKeyConstants.USER_ID, userId);
         sUserId = userId;
     }
 
@@ -39,7 +39,7 @@ public final class Config {
     }
 
     public static void setUsername(String username) {
-        sSp.put(SpUtilKeyConstants.USERNAME, username);
+        SP.put(SpUtilKeyConstants.USERNAME, username);
         sUsername = username;
     }
 
@@ -49,9 +49,9 @@ public final class Config {
     }
 
     public static void loadConfig() {
-        sIsLogin = sSp.getBoolean(SpUtilKeyConstants.IS_LOGIN, false);
-        sUserId = sSp.getInt(SpUtilKeyConstants.USER_ID, -1);
-        sUsername = sSp.getString(SpUtilKeyConstants.USERNAME, "");
+        sIsLogin = SP.getBoolean(SpUtilKeyConstants.IS_LOGIN, false);
+        sUserId = SP.getInt(SpUtilKeyConstants.USER_ID, -1);
+        sUsername = SP.getString(SpUtilKeyConstants.USERNAME, "");
     }
 
     static {
