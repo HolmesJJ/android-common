@@ -6,7 +6,7 @@ public final class Config {
 
     public static final String SETTING_CONFIG = "SettingConfig";
 
-    private static SpUtils sSp = SpUtils.getInstance(SETTING_CONFIG);
+    private final static SpUtils SP = SpUtils.getInstance(SETTING_CONFIG);
 
     private Config() {
     }
