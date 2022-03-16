@@ -28,12 +28,12 @@ public abstract class BaseConnection {
     public static final String CONNECTION = "Connection";
     public static final String KEEP_ALIVE = "Keep-Alive";
     public static final String CHARSET = "Charset";
-    public static final String HTTP_REQ_PROPERTY_CHARSET = "Accept-Charset";
-    public static final String HTTP_REQ_VALUE_CHARSET = "UTF-8";
-    public static final String HTTP_REQ_PROPERTY_CONTENT_TYPE = "Content-Type";
-    public static final String HTTP_REQ_FORM_VALUE_CONTENT_TYPE = "application/x-www-form-urlencoded";
-    public static final String HTTP_REQ_JSON_VALUE_CONTENT_TYPE = "application/json; " + "charset=UTF-8";
-    public static final String HTTP_REQ_COOKIE = "Cookie";
+    protected static final String HTTP_REQ_PROPERTY_CHARSET = "Accept-Charset";
+    protected static final String HTTP_REQ_VALUE_CHARSET = "UTF-8";
+    protected static final String HTTP_REQ_PROPERTY_CONTENT_TYPE = "Content-Type";
+    protected static final String HTTP_REQ_FORM_VALUE_CONTENT_TYPE = "application/x-www-form-urlencoded";
+    protected static final String HTTP_REQ_JSON_VALUE_CONTENT_TYPE = "application/json; " + "charset=UTF-8";
+    protected static final String HTTP_REQ_COOKIE = "Cookie";
     public static final String GET = "GET";
     public static final String POST = "POST";
     public static final String BASE_CONNECTION = "BaseConnection";
