@@ -18,8 +18,11 @@ public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewMode
     private static final String TAG = InitActivity.class.getSimpleName();
 
     private static final String[] PERMISSIONS = new String[]{
-            android.Manifest.permission.INTERNET,
             android.Manifest.permission.CAMERA,
+            android.Manifest.permission.RECORD_AUDIO,
+            android.Manifest.permission.READ_PHONE_STATE,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
     };
 
     @Override

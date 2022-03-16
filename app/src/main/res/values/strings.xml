@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">common</string>
+    <string name="app_name">Deaf Talk</string>
 
     <string name="exit_app_str">Press Again to Exit</string>
 
@@ -18,4 +18,20 @@
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign In</string>
+
+    <!--main-->
+    <string name="games">Games</string>
+    <string name="jump_for_fun">Jump for Fun</string>
+    <string name="cube_hub">Cube-Hub</string>
+    <string name="past_records">Past Records</string>
+    <string name="check_in_sentence_1">You have checked in</string>
+    <string name="check_in_sentence_2">regularly</string>
+    <string name="check_in_sentence_3">today</string>
+    <string name="not_check_in_sentence_1">You have</string>
+    <string name="not_check_in_sentence_2">not</string>
+    <string name="not_check_in_sentence_3">checked in</string>
+    <string name="not_check_in_sentence_4">today.</string>
+    <string name="not_check_in_sentence_5">Cheer up!</string>
+    <string name="daily_progress">Daily Progress</string>
+    <string name="daily_tasks">Daily Tasks</string>
 </resources>

@@ -7,7 +7,7 @@
             type="com.example.common.MainViewModel" />
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rl_container"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -16,6 +16,303 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginTop="@dimen/dp_20">
+
+            <RelativeLayout
+                android:id="@+id/rl_check_in_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/ll_check_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginStart="@dimen/dp_20"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/check_in_sentence_1"
+                            android:textSize="@dimen/sp_16"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_20"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/check_in_sentence_2"
+                            android:textSize="@dimen/sp_18"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/check_in_sentence_3"
+                            android:layout_marginStart="@dimen/dp_5"
+                            android:textSize="@dimen/sp_16" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_not_check_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginStart="@dimen/dp_20"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/not_check_in_sentence_1"
+                            android:textSize="@dimen/sp_16"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/not_check_in_sentence_2"
+                            android:textSize="@dimen/sp_18"
+                            android:layout_marginStart="@dimen/dp_5"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/not_check_in_sentence_3"
+                            android:layout_marginStart="@dimen/dp_5"
+                            android:textSize="@dimen/sp_16"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_20"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/not_check_in_sentence_4"
+                            android:textSize="@dimen/sp_16" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/not_check_in_sentence_5"
+                            android:textSize="@dimen/sp_18"
+                            android:layout_marginStart="@dimen/dp_5"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <com.example.common.ui.widget.RoundImageView
+                android:id="@+id/riv_avatar"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_50"
+                android:src="@drawable/ic_avatar"
+                app:border_color="@color/white"
+                app:border_width="@dimen/dp_2" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_20"
+            android:paddingStart="@dimen/dp_20"
+            android:paddingEnd="@dimen/dp_20"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/games"
+                android:textSize="@dimen/sp_18"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/dp_5"
+            android:paddingEnd="@dimen/dp_5">
+
+            <com.example.common.ui.widget.main.GameView
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:bg_color="@color/FFD8CAAF"
+                app:src="@drawable/ic_jump_for_fun"
+                app:title="@string/jump_for_fun" />
+
+            <com.example.common.ui.widget.main.GameView
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:bg_color="@color/FFE0CDCF"
+                app:src="@drawable/ic_cube_hub"
+                app:title="@string/cube_hub" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp_20"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/past_records"
+                android:textSize="@dimen/sp_18"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/iv_left"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="match_parent"
+                android:padding="@dimen/dp_5"
+                android:src="@drawable/ic_left"/>
+
+            <TextView
+                android:id="@+id/tv_current_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_18"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_right"
+                android:layout_width="@dimen/dp_40"
+                android:layout_height="match_parent"
+                android:padding="@dimen/dp_5"
+                android:src="@drawable/ic_right"
+                android:visibility="invisible"/>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_dates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_20"
+            android:layout_marginEnd="@dimen/dp_20"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp_20"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/daily_progress"
+                android:textSize="@dimen/sp_18"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <com.example.common.ui.widget.BarChartView
+            android:id="@+id/bcv_progress"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginStart="@dimen/dp_30"
+            android:layout_marginEnd="@dimen/dp_30"
+            android:layout_gravity="center"
+            app:bar_color="@color/FFB5C4B1"
+            app:bar_bg_color="@color/FFECECEA"
+            app:corner_radius="@dimen/dp_10"
+            app:text_size="@dimen/sp_18" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp_20"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/daily_tasks"
+                android:textSize="@dimen/sp_18"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_task_view_round"
+            android:paddingTop="@dimen/dp_20"
+            android:paddingStart="@dimen/dp_20"
+            android:paddingEnd="@dimen/dp_20"
+            android:paddingBottom="@dimen/dp_20">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_tasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </layout>

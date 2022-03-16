@@ -1,5 +1,7 @@
 package com.example.common.ui.viewmodel;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
@@ -8,9 +10,16 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.common.MainActivity;
+import com.example.common.api.ApiClient;
+import com.example.common.api.model.login.LoginResult;
+import com.example.common.api.model.login.PublicKeyResult;
 import com.example.common.base.BaseActivity;
 import com.example.common.base.BaseViewModel;
 import com.example.common.config.Config;
+import com.example.common.constants.Constants;
+import com.example.common.network.http.Result;
+import com.example.common.thread.ThreadManager;
+import com.example.common.utils.ToastUtils;
 
 public class LoginViewModel extends BaseViewModel {
 
@@ -56,9 +65,33 @@ public class LoginViewModel extends BaseViewModel {
             return;
         }
         mIsShowLoading.postValue(true);
-        Config.setLogin(true);
-        Config.setUserId(1);
-        mActivityAction.postValue(MainActivity.class);
+        ThreadManager.getThreadPollProxy().execute(new Runnable() {
+            @Override
+            public void run() {
+                Result<LoginResult> loginResult = ApiClient.login(mUsername.get(), mPassword.get(), Config.getDeviceUUID());
+                if (!loginResult.isSuccess()) {
+                    mIsShowLoading.postValue(false);
+                    ToastUtils.showShortSafe("Public Key is Invalid");
+                    return;
+                }
+                LoginResult loginResultBody = loginResult.getBody(LoginResult.class);
+                mIsShowLoading.postValue(false);
+                if (loginResultBody.getStatus().equals(Constants.SUCCESS)) {
+                    Config.setLogin(true);
+                    Config.setUserId(loginResultBody.getUserId());
+                    Config.setUsername(mUsername.get());
+                    Config.setToken(loginResultBody.getToken());
+                    Config.setRefreshToken(loginResultBody.getRefreshToken());
+                    mActivityAction.postValue(MainActivity.class);
+                } else {
+                    if (loginResultBody.getError().equals(Constants.FAILED)) {
+                        ToastUtils.showShortSafe("Login Failed");
+                    } else {
+                        ToastUtils.showShortSafe("Your account has been frozen");
+                    }
+                }
+            }
+        });
     }
 
     public void updateSignInBtnState() {

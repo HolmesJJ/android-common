@@ -74,7 +74,7 @@ public abstract class BaseConnection {
         if (Request.RequestMethod.GET.value().equals(request.getMethod())) {
             return doGetRequest();
         } else if (Request.RequestMethod.POST.value().equals(request.getMethod())) {
-            return doPostRequest(request.getBody());
+            return doPostRequest((HashMap<String, String>) request.getBody());
         } else if (Request.RequestMethod.GET_IMAGE.value().equals(request.getMethod())) {
             return doGetImageRequest();
         } else {
@@ -313,6 +313,79 @@ public abstract class BaseConnection {
                 result.setData("");
                 result.setDesc(resultStr);
                 result.setMessage(resultStr);
+            }
+
+            if (Debug.isDebug()) {
+                String baseConnection = "BaseConnection";
+                Log.d(baseConnection, "response: " + resultStr);
+            }
+            result.setOriginData(resultStr);
+            return result;
+        } catch (Exception e) {
+            Result<Object> objectResult = new Result<>(ResponseCode.NETWORK_ERROR, "network error", "network error", null);
+            e.printStackTrace();
+            return objectResult;
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            getURLConnection().disconnect();
+        }
+    }
+
+    private Result doPostRequest(HashMap<String, String> params) {
+        OutputStream out = null;
+        InputStream is = null;
+        try {
+            // 向服务器发送post请求
+            HttpURLConnection connection = getURLConnection();
+            // 发送POST请求必须设置如下两行
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.setRequestMethod(POST);
+            connection.setRequestProperty(CONNECTION, KEEP_ALIVE);
+            connection.setRequestProperty(CHARSET, HTTP_REQ_VALUE_CHARSET);
+            connection.setRequestProperty(HTTP_REQ_PROPERTY_CONTENT_TYPE,
+                                          HTTP_REQ_FORM_VALUE_CONTENT_TYPE);
+            String body = getBody(params);
+
+            if (Debug.isDebug()) {
+                printUrlAndHeader(connection);
+                Log.d(BASE_CONNECTION, "body: " + body);
+            }
+
+            out = connection.getOutputStream();
+            out.write(body.getBytes(HTTP_REQ_VALUE_CHARSET));
+            out.flush();
+            // 4. 从服务器获得回答的内容
+            // http成功的返回code，和服务的成功code不一定一致
+            int successCode = 200;
+            Result result = null;
+            String resultStr = "";
+            if (connection.getResponseCode() == successCode) {
+                is = connection.getInputStream();
+                resultStr = readDataFromStream(is);
+            } else {
+                is = connection.getErrorStream();
+                resultStr = readDataFromStream(is);
+            }
+            if (resultStr.charAt(0) == '[') {
+                resultStr = "{" + "\"list\":" + resultStr + "}";
+                result = JSON.parseObject(resultStr, Result.class);
+            } else {
+                result = JSON.parseObject(resultStr, Result.class);
             }
 
             if (Debug.isDebug()) {
