@@ -62,7 +62,7 @@ public class HttpAsyncTaskGet extends AsyncTask<Object, Void, String> {
         return result;
     }
 
-    private static String convertInputStreamToString(InputStream inputStream)throws IOException {
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(inputStream));
         String line = "";
