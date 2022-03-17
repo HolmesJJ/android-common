@@ -3,6 +3,7 @@ package com.example.common;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,8 +32,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     private long mCurrentTime = System.currentTimeMillis();
     private int mSelectedDate;
+    private int mCurProgress;
+    private int mMaxProgress;
     private DateAdapter mDateAdapter;
     private TaskAdapter mTaskAdapter;
+    private Handler mHandler;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -52,6 +56,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     @Override
     public void initData() {
         super.initData();
+        if (mHandler == null) {
+            mHandler = new Handler();
+        }
         String avatar = Constants.HTTPS_SERVER_URL + "images/profile/" + Config.getUserId() + ".png";
         Glide.with(this).load(avatar).circleCrop().into(getBinding().rivAvatar);
     }
@@ -75,6 +82,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     @Override
     protected void onDestroy() {
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
         super.onDestroy();
     }
 
@@ -100,7 +111,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         });
         getViewModel().getProgress().observe(this, progress -> {
             if (progress != null) {
-                getBinding().bcvProgress.setProgress(progress);
+                mMaxProgress = progress;
+                mCurProgress = 0;
+                if (mHandler != null) {
+                    mHandler.post(mProgressRunnable);
+                }
             }
         });
     }
@@ -183,6 +198,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
             getBinding().ivRight.setClickable(true);
         }
     }
+
+    private final Runnable mProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            getBinding().bcvProgress.setProgress(mCurProgress);
+            if (mCurProgress < mMaxProgress) {
+                mCurProgress++;
+                mHandler.postDelayed(mProgressRunnable, 5);
+            }
+        }
+    };
 
     /**
      * 控制进度圈显示
