@@ -90,6 +90,7 @@ public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewMode
         getViewModel().getActivityAction().observe(this, activityAction -> {
             stopLoading();
             Intent intent = new Intent(ContextUtils.getContext(), activityAction);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         });

@@ -302,6 +302,7 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
      */
     public void startActivity(Class<?> clz, Bundle bundle) {
         Intent intent = new Intent(mContext, clz);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (bundle != null) {
             intent.putExtras(bundle);
         }
