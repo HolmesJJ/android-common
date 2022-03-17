@@ -1,22 +1,28 @@
 package com.example.common;
 
-import android.util.Log;
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
+import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.common.api.ApiClient;
+import com.example.common.api.model.main.DownloadParameter;
+import com.example.common.api.model.main.DownloadResult;
 import com.example.common.api.model.main.TaskResult;
 import com.example.common.api.model.main.TasksResult;
-import com.example.common.api.model.token.RefreshTokenResult;
+import com.example.common.base.BaseActivity;
 import com.example.common.base.BaseViewModel;
 import com.example.common.model.main.Task;
-import com.example.common.network.http.ResponseCode;
 import com.example.common.network.http.Result;
 import com.example.common.thread.ThreadManager;
+import com.example.common.ui.activity.SectionActivity;
+import com.example.common.utils.FileUtils;
 import com.example.common.utils.RefreshTokenUtils;
 import com.example.common.utils.ToastUtils;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +30,7 @@ public class MainViewModel extends BaseViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
 
+    private final MutableLiveData<Pair<Class<? extends BaseActivity<? extends ViewDataBinding, ? extends BaseViewModel>>, Integer>> mActivityAction = new MutableLiveData<>();
     private final MutableLiveData<List<Task>> mTasks = new MutableLiveData<>();
     private final MutableLiveData<Integer> mProgress = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsShowLoading = new MutableLiveData<>();
@@ -36,6 +43,10 @@ public class MainViewModel extends BaseViewModel {
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
 
+    }
+
+    public MutableLiveData<Pair<Class<? extends BaseActivity<? extends ViewDataBinding, ? extends BaseViewModel>>, Integer>> getActivityAction() {
+        return mActivityAction;
     }
 
     public MutableLiveData<List<Task>> getTasks() {
@@ -83,6 +94,40 @@ public class MainViewModel extends BaseViewModel {
                     mProgress.postValue(progress);
                 }
                 mIsShowLoading.postValue(false);
+            }
+        });
+    }
+
+    public void download(int englishId, List<DownloadParameter> downloadParameters) {
+        mIsShowLoading.postValue(true);
+        ThreadManager.getThreadPollProxy().execute(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < downloadParameters.size(); i++) {
+                    String folder = downloadParameters.get(i).getFolder();
+                    String file = downloadParameters.get(i).getFile();
+                    String path = downloadParameters.get(i).getPath();
+                    File f = new File(folder, file);
+                    if (f.exists()) {
+                        continue;
+                    }
+                    Result<DownloadResult> downloadResult = ApiClient.download(folder, file, path);
+                    if (downloadResult.isTokenTimeout() || downloadResult.isForbidden()) {
+                        RefreshTokenUtils.refreshToken();
+                        mIsShowLoading.postValue(false);
+                        download(englishId, downloadParameters);
+                        return;
+                    }
+                    if (!downloadResult.isSuccess()) {
+                        ToastUtils.showShortSafe( "Download " + file + " Failed");
+                        return;
+                    }
+                    if (file.contains(".zip")) {
+                        FileUtils.unzip(f, new File(folder));
+                    }
+                }
+                mIsShowLoading.postValue(false);
+                mActivityAction.postValue(new Pair<>(SectionActivity.class, englishId));
             }
         });
     }

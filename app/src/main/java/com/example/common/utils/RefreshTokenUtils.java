@@ -25,7 +25,7 @@ public final class RefreshTokenUtils {
         if (refreshTokenResult.isSuccess()) {
             count = 0;
             RefreshTokenResult body = refreshTokenResult.getBody(RefreshTokenResult.class);
-             Config.setToken(body.getToken());
+            Config.setToken(body.getToken());
         }
     }
 }

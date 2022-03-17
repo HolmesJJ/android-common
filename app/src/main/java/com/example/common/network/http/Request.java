@@ -22,7 +22,11 @@ public class Request {
         /**
          * POST方法
          */
-        POST("POST");
+        POST("POST"),
+        /**
+         * 下载
+         */
+        DOWNLOAD("DOWNLOAD");
 
         private final String value;
 

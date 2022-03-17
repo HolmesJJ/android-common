@@ -95,7 +95,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
 
     private void setObserveListener() {
         getViewModel().getActivityAction().observe(this, activityAction -> {
-            stopLoading();
             if (activityAction != null) {
                 try {
                     Intent intent = new Intent(ContextUtils.getContext(), activityAction);

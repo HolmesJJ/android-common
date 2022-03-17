@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,18 +14,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.common.adapter.main.DateAdapter;
 import com.example.common.adapter.main.TaskAdapter;
+import com.example.common.api.model.main.DownloadParameter;
 import com.example.common.base.BaseActivity;
 import com.example.common.config.Config;
 import com.example.common.constants.Constants;
 import com.example.common.databinding.ActivityMainBinding;
 import com.example.common.listener.OnMultiClickListener;
 import com.example.common.model.main.DateOfMonth;
-import com.example.common.ui.activity.SectionActivity;
 import com.example.common.utils.ContextUtils;
 import com.example.common.utils.DateUtils;
+import com.example.common.utils.FileUtils;
 import com.example.common.utils.ListenerUtils;
 import com.example.common.utils.ToastUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewModel> {
@@ -101,13 +104,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 mTaskAdapter = new TaskAdapter(ContextUtils.getContext(), tasks, new TaskAdapter.OnItemListener() {
                     @Override
                     public void onItemListener(int position) {
-                        try {
-                            Intent intent = new Intent(ContextUtils.getContext(), SectionActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.putExtra("englishId", tasks.get(position).getEnglishId());
-                            startActivity(intent);
-                        } catch (Exception e) {
-                            ToastUtils.showShortSafe(e.getMessage());
+                        int englishId = tasks.get(position).getEnglishId();
+                        if (getViewModel() != null) {
+                            List<DownloadParameter> downloadParameters = new ArrayList<>();
+                            downloadParameters.add(new DownloadParameter(FileUtils.VIDEO_DIR, "tutorial.mp4", "englishId/" + englishId + "/tutorialVideo"));
+                            downloadParameters.add(new DownloadParameter(FileUtils.VIDEO_DIR, "exercise.mp4", "englishId/" + englishId + "/exerciseVideo"));
+                            downloadParameters.add(new DownloadParameter(FileUtils.VIDEO_DIR, "organ.mp4", "englishId/" + englishId + "/organVideo"));
+                            downloadParameters.add(new DownloadParameter(FileUtils.FRAMES_DIR, "frames.zip", "englishId/" + englishId + "/Frames"));
+                            getViewModel().download(englishId, downloadParameters);
                         }
                     }
                 });
@@ -124,6 +128,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 if (mHandler != null) {
                     mHandler.post(mProgressRunnable);
                 }
+            }
+        });
+        getViewModel().getActivityAction().observe(this, activityAction -> {
+            if (activityAction != null) {
+                try {
+                    Intent intent = new Intent(ContextUtils.getContext(), activityAction.first);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("englishId", activityAction.second);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    ToastUtils.showShortSafe(e.getMessage());
+                }
+            } else {
+                Log.e(TAG, "activityAction is null");
             }
         });
     }

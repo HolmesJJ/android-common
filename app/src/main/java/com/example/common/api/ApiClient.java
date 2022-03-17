@@ -1,10 +1,13 @@
 package com.example.common.api;
 
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
 
 import com.example.common.api.model.login.DeviceUUIDResult;
 import com.example.common.api.model.login.LoginResult;
 import com.example.common.api.model.login.PublicKeyResult;
+import com.example.common.api.model.main.DownloadResult;
 import com.example.common.api.model.main.TasksResult;
 import com.example.common.api.model.token.RefreshTokenResult;
 import com.example.common.config.Config;
@@ -13,7 +16,6 @@ import com.example.common.network.http.Request;
 import com.example.common.network.http.Result;
 import com.example.common.utils.RSAUtils;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 
 /**
@@ -78,6 +80,19 @@ public final class ApiClient {
         Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/userId/" + Config.getUserId() + "/schedule/progress")
                 .setHeaderMap(headers)
                 .setMethod(Request.RequestMethod.GET.value());
+        return ExecutorRequest.execute(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static Result<DownloadResult> download(String folder, String file, String path) {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "bearer " + Config.getToken());
+        Pair<String, String> parameters = new Pair<>(folder, file);
+        Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/" + path)
+                .setHeaderMap(headers)
+                .setMethod(Request.RequestMethod.DOWNLOAD.value())
+                .setBody(parameters);
         return ExecutorRequest.execute(request);
     }
 }

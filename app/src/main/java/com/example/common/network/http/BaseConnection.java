@@ -2,11 +2,14 @@ package com.example.common.network.http;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 
 import com.alibaba.fastjson.JSON;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,6 +38,8 @@ public abstract class BaseConnection {
     protected static final String HTTP_REQ_PROPERTY_CONTENT_TYPE = "Content-Type";
     protected static final String HTTP_REQ_FORM_VALUE_CONTENT_TYPE = "application/x-www-form-urlencoded";
     protected static final String HTTP_REQ_JSON_VALUE_CONTENT_TYPE = "application/json; " + "charset=UTF-8";
+    protected static final String HTTP_REQ_PROPERTY_ENCODING = "Accept-Encoding";
+    protected static final String HTTP_REQ_VALUE_ENCODING = "identity";
     protected static final String HTTP_REQ_COOKIE = "Cookie";
     public static final String GET = "GET";
     public static final String POST = "POST";
@@ -77,6 +82,8 @@ public abstract class BaseConnection {
             return doPostRequest((HashMap<String, String>) request.getBody());
         } else if (Request.RequestMethod.GET_IMAGE.value().equals(request.getMethod())) {
             return doGetImageRequest();
+        } else if (Request.RequestMethod.DOWNLOAD.value().equals(request.getMethod())) {
+            return doDownloadRequest((Pair<String, String>) request.getBody());
         } else {
             return new Result<>(ResponseCode.NETWORK_ERROR, String.format("no support method:%s",
                     request.getMethod()), String.format("no support method:%s", request.getMethod()), null);
@@ -428,6 +435,81 @@ public abstract class BaseConnection {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+            getURLConnection().disconnect();
+        }
+    }
+
+    private Result doDownloadRequest(Pair<String, String> params) {
+        String resultStr = "";
+        File file = null;
+        FileOutputStream fos = null;
+        InputStream is = null;
+        try {
+            HttpURLConnection connection = getURLConnection();
+            connection.setRequestMethod(GET);
+            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(3000);
+            connection.setRequestProperty(HTTP_REQ_PROPERTY_ENCODING, HTTP_REQ_VALUE_ENCODING);
+
+            if (Debug.isDebug()) {
+                printUrlAndHeader(connection);
+            }
+            // http成功的返回code，和服务的成功code不一定一致
+            int successCode = 200;
+            Result result = null;
+            if (connection.getResponseCode() == successCode) {
+                double fileLength = connection.getContentLength();
+                file = new File(params.first, params.second);
+                fos = new FileOutputStream(file);
+                is = connection.getInputStream();
+                // video大小
+                if(fileLength > 0) {
+                    // 建立一个byte数组作为缓冲区，等下把读取到的数据储存在这个数组
+                    byte[] buffer = new byte[8192];
+                    int len = 0;
+                    while ((len = is.read(buffer)) != -1) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.flush();
+                    resultStr = "{" + "\"status\": \"Succeeded\"}";
+                } else {
+                    resultStr = "{" + "\"status\": \"Failed\"}";
+                }
+                result = JSON.parseObject(resultStr, Result.class);
+            } else {
+                is = connection.getErrorStream();
+                resultStr = readDataFromStream(is);
+                result = new Result();
+                result.setCode(connection.getResponseCode());
+                result.setData("");
+                result.setDesc(resultStr);
+                result.setMessage(resultStr);
+            }
+
+            if (Debug.isDebug()) {
+                String baseConnection = "BaseConnection";
+                Log.d(baseConnection, "response: " + resultStr);
+            }
+            result.setOriginData(resultStr);
+            return result;
+        } catch (Exception e) {
+            if (file.exists()) {
+                file.delete();
+            }
+            Result<Object> objectResult = new Result<>(ResponseCode.NETWORK_ERROR, "network error", "network error", null);
+            e.printStackTrace();
+            return objectResult;
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             getURLConnection().disconnect();
         }
