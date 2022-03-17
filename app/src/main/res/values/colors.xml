@@ -10,6 +10,7 @@
     <color name="red">#FFFF0000</color>
     <color name="green">#FF00FF00</color>
     <color name="blue">#FF0000FF</color>
+    <color name="light_gary">#FFF5F5F5</color>
 
     <!--Morandi Color-->
     <color name="FFC1CBD7">#FFC1CBD7</color>
