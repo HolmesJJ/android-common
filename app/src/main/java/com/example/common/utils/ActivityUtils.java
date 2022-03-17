@@ -16,14 +16,11 @@ public final class ActivityUtils {
         if (context != null) {
             final LoadingDialog loadingDialog = new LoadingDialog(context);
             loadingDialog.showLoading();
-
             AppManagerUtils.getAppManager().callbackExitCallbacks();
             // 提交退出信息
             handler.postDelayed(new Runnable() {
-
                 @Override
                 public void run() {
-
                     loadingDialog.dismiss();
                     AppManagerUtils.getAppManager().appExit();
                 }
@@ -31,7 +28,6 @@ public final class ActivityUtils {
         } else {
             AppManagerUtils.getAppManager().callbackExitCallbacks();
             handler.postDelayed(new Runnable() {
-
                 @Override
                 public void run() {
                     AppManagerUtils.getAppManager().appExit();
