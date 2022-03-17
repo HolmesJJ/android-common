@@ -63,6 +63,14 @@ public class Result<T> implements Serializable {
         return this.code == ResponseCode.SUCCESS;
     }
 
+    public boolean isTokenTimeout() {
+        return this.code == ResponseCode.TOKEN_TIMEOUT;
+    }
+
+    public boolean isForbidden() {
+        return this.code == ResponseCode.FORBIDDEN;
+    }
+
     public T getBody(Class<T> cls) {
         if (data == null) {
             try {

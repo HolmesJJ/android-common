@@ -1,8 +1,10 @@
 package com.example.common.utils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Handler;
 
+import com.example.common.ui.activity.LoginActivity;
 import com.example.common.ui.widget.dialog.LoadingDialog;
 
 public final class ActivityUtils {
@@ -33,6 +35,20 @@ public final class ActivityUtils {
                     AppManagerUtils.getAppManager().appExit();
                 }
             }, milliseconds);
+        }
+    }
+
+    public static void redirectToLogin() {
+        Activity context = AppManagerUtils.getAppManager().popActivity();
+        if (context != null) {
+            try {
+                Intent intent = new Intent(context, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(intent);
+                context.finish();
+            } catch (Exception e) {
+                ToastUtils.showShortSafe(e.getMessage());
+            }
         }
     }
 }

@@ -372,20 +372,36 @@ public abstract class BaseConnection {
             // 4. 从服务器获得回答的内容
             // http成功的返回code，和服务的成功code不一定一致
             int successCode = 200;
+            int notFoundCode = 404;
             Result result = null;
             String resultStr = "";
             if (connection.getResponseCode() == successCode) {
                 is = connection.getInputStream();
                 resultStr = readDataFromStream(is);
+                if (resultStr.charAt(0) == '[') {
+                    resultStr = "{" + "\"list\":" + resultStr + "}";
+                    result = JSON.parseObject(resultStr, Result.class);
+                } else {
+                    result = JSON.parseObject(resultStr, Result.class);
+                }
+            } else if (connection.getResponseCode() == notFoundCode) {
+                is = connection.getErrorStream();
+                resultStr = readDataFromStream(is);
+                if (resultStr.charAt(0) == '[') {
+                    resultStr = "{" + "\"list\":" + resultStr + "}";
+                    result = JSON.parseObject(resultStr, Result.class);
+                } else {
+                    result = JSON.parseObject(resultStr, Result.class);
+                }
+                result.setCode(connection.getResponseCode());
             } else {
                 is = connection.getErrorStream();
                 resultStr = readDataFromStream(is);
-            }
-            if (resultStr.charAt(0) == '[') {
-                resultStr = "{" + "\"list\":" + resultStr + "}";
-                result = JSON.parseObject(resultStr, Result.class);
-            } else {
-                result = JSON.parseObject(resultStr, Result.class);
+                result = new Result();
+                result.setCode(connection.getResponseCode());
+                result.setData("");
+                result.setDesc(resultStr);
+                result.setMessage(resultStr);
             }
 
             if (Debug.isDebug()) {

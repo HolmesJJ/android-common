@@ -6,6 +6,6 @@
     <solid android:color="@color/FFECECEA" />
     <!-- android:radius 圆角的半径 -->
     <corners
-        android:topLeftRadius="@dimen/dp_50"
-        android:topRightRadius="@dimen/dp_50" />
+        android:topLeftRadius="@dimen/dp_30"
+        android:topRightRadius="@dimen/dp_30" />
 </shape>

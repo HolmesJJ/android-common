@@ -1,7 +1,5 @@
 package com.example.common.ui.viewmodel;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
@@ -12,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.common.MainActivity;
 import com.example.common.api.ApiClient;
 import com.example.common.api.model.login.LoginResult;
-import com.example.common.api.model.login.PublicKeyResult;
 import com.example.common.base.BaseActivity;
 import com.example.common.base.BaseViewModel;
 import com.example.common.config.Config;
@@ -71,7 +68,7 @@ public class LoginViewModel extends BaseViewModel {
                 Result<LoginResult> loginResult = ApiClient.login(mUsername.get(), mPassword.get(), Config.getDeviceUUID());
                 if (!loginResult.isSuccess()) {
                     mIsShowLoading.postValue(false);
-                    ToastUtils.showShortSafe("Public Key is Invalid");
+                    ToastUtils.showShortSafe("Login Failed");
                     return;
                 }
                 LoginResult loginResultBody = loginResult.getBody(LoginResult.class);

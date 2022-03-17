@@ -2,18 +2,18 @@ package com.example.common.model.main;
 
 public class Task {
 
-    private final int taskId;
+    private final int englishId;
     private final String content;
     private final boolean isFinish;
 
-    public Task(int taskId, String content, boolean isFinish) {
-        this.taskId = taskId;
+    public Task(int englishId, String content, boolean isFinish) {
+        this.englishId = englishId;
         this.content = content;
         this.isFinish = isFinish;
     }
 
-    public int getTaskId() {
-        return taskId;
+    public int getEnglishId() {
+        return englishId;
     }
 
     public String getContent() {

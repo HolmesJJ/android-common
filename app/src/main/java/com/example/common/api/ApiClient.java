@@ -2,10 +2,11 @@ package com.example.common.api;
 
 import androidx.annotation.NonNull;
 
-import com.example.common.api.model.login.DeviceUUIDParameter;
 import com.example.common.api.model.login.DeviceUUIDResult;
 import com.example.common.api.model.login.LoginResult;
 import com.example.common.api.model.login.PublicKeyResult;
+import com.example.common.api.model.main.TasksResult;
+import com.example.common.api.model.token.RefreshTokenResult;
 import com.example.common.config.Config;
 import com.example.common.constants.Constants;
 import com.example.common.network.http.Request;
@@ -44,6 +45,19 @@ public final class ApiClient {
 
     @SuppressWarnings("unchecked")
     @NonNull
+    public static Result<RefreshTokenResult> refreshToken() {
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("accessToken", Config.getToken());
+        parameters.put("refreshToken", Config.getRefreshToken());
+        parameters.put("grant_type", "refresh_token");
+        Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/refreshToken")
+                .setMethod(Request.RequestMethod.POST.value())
+                .setBody(parameters);
+        return ExecutorRequest.execute(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
     public static Result<LoginResult> login(String username, String password, String deviceId) {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("username", RSAUtils.encryptByPublicKey(username, Config.getPublicKey()));
@@ -53,6 +67,17 @@ public final class ApiClient {
         Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/login")
                 .setMethod(Request.RequestMethod.POST.value())
                 .setBody(parameters);
+        return ExecutorRequest.execute(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static Result<TasksResult> getTasks() {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "bearer " + Config.getToken());
+        Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/userId/" + Config.getUserId() + "/schedule/progress")
+                .setHeaderMap(headers)
+                .setMethod(Request.RequestMethod.GET.value());
         return ExecutorRequest.execute(request);
     }
 }

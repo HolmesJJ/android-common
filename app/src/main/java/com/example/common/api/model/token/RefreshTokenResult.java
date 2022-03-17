@@ -1,17 +1,14 @@
-package com.example.common.api.model.login;
+package com.example.common.api.model.token;
 
 import androidx.annotation.NonNull;
 
-public class LoginResult {
+public class RefreshTokenResult {
 
     private String status;
-    private int userId;
     private String token;
-    private String refreshToken;
     private String expiration;
-    private String error;
 
-    public LoginResult() {
+    public RefreshTokenResult() {
     }
 
     public String getStatus() {
@@ -22,28 +19,12 @@ public class LoginResult {
         this.status = status;
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public String getToken() {
         return token;
     }
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
     }
 
     public String getExpiration() {
@@ -54,24 +35,13 @@ public class LoginResult {
         this.expiration = expiration;
     }
 
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
     @NonNull
     @Override
     public String toString() {
-        return "LoginResult{" +
+        return "RefreshTokenResult{" +
                 "status='" + status + '\'' +
-                ", userId=" + userId +
                 ", token='" + token + '\'' +
-                ", refreshToken='" + refreshToken + '\'' +
                 ", expiration='" + expiration + '\'' +
-                ", error='" + error + '\'' +
                 '}';
     }
 }

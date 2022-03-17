@@ -1,6 +1,7 @@
 package com.example.common.adapter.main;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,8 +15,11 @@ import java.util.List;
 
 public class TaskAdapter extends BaseAdapter<Task> {
 
-    public TaskAdapter(Context context, List<Task> tasks) {
+    private final OnItemListener onItemListener;
+
+    public TaskAdapter(Context context, List<Task> tasks, OnItemListener onItemListener) {
         super(context, tasks);
+        this.onItemListener = onItemListener;
     }
 
     @Override
@@ -24,15 +28,27 @@ public class TaskAdapter extends BaseAdapter<Task> {
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.setText(R.id.tv_content, task.getContent());
         if(task.isFinish()) {
-            viewHolder.getView(R.id.riv_check).setBackgroundResource(R.color.FFB5C4B1);
+            viewHolder.getView(R.id.riv_check).setBackgroundResource(R.drawable.ic_checked);
         }
         else {
-            viewHolder.getView(R.id.riv_check).setBackgroundResource(R.color.FFDADAD8);
+            viewHolder.getView(R.id.riv_check).setBackgroundResource(R.drawable.ic_unchecked);
         }
+        viewHolder.setOnClickListener(R.id.cv_container, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemListener != null) {
+                    onItemListener.onItemListener(position);
+                }
+            }
+        });
     }
 
     @Override
     public RecyclerView.ViewHolder initContentViews(ViewGroup parent, int viewType) {
         return ViewHolder.createViewHolder(getContext(), parent, R.layout.item_task);
+    }
+
+    public interface OnItemListener {
+        void onItemListener(int position);
     }
 }

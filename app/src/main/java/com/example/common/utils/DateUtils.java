@@ -129,6 +129,13 @@ public final class DateUtils {
         return compareCalendar.get(Calendar.YEAR);
     }
 
+    public static int getDate(Long compareTime) {
+        Calendar compareCalendar = Calendar.getInstance();
+        compareCalendar.clear();
+        compareCalendar.setTimeInMillis(compareTime);
+        return compareCalendar.get(Calendar.DATE);
+    }
+
     /**
      * 获取上个月
      */

@@ -36,9 +36,11 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
     @Override
     public void initData() {
         super.initData();
-        getViewModel().getUsername().set(getBinding().etUsername.getText().toString());
-        getViewModel().getPassword().set(getBinding().etPassword.getText().toString());
-        getViewModel().updateSignInBtnState();
+        if (getViewModel() != null) {
+            getViewModel().getUsername().set(getBinding().etUsername.getText().toString());
+            getViewModel().getPassword().set(getBinding().etPassword.getText().toString());
+            getViewModel().updateSignInBtnState();
+        }
     }
 
     @Override
