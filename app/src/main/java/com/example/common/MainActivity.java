@@ -19,6 +19,7 @@ import com.example.common.constants.Constants;
 import com.example.common.databinding.ActivityMainBinding;
 import com.example.common.listener.OnMultiClickListener;
 import com.example.common.model.main.DateOfMonth;
+import com.example.common.ui.activity.SectionActivity;
 import com.example.common.utils.ContextUtils;
 import com.example.common.utils.DateUtils;
 import com.example.common.utils.ListenerUtils;
@@ -100,7 +101,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 mTaskAdapter = new TaskAdapter(ContextUtils.getContext(), tasks, new TaskAdapter.OnItemListener() {
                     @Override
                     public void onItemListener(int position) {
-
+                        try {
+                            Intent intent = new Intent(ContextUtils.getContext(), SectionActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("englishId", tasks.get(position).getEnglishId());
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            ToastUtils.showShortSafe(e.getMessage());
+                        }
                     }
                 });
                 getBinding().rvTasks.setAdapter(mTaskAdapter);
@@ -127,10 +135,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
             public void onMultiClick(View v) {
                 String packageName = "com.debug_version.TiaoYiTiao";
                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                if(launchIntent != null) {
+                if (launchIntent != null) {
                     startActivity(launchIntent);
-                }
-                else {
+                } else {
                     ToastUtils.showShortSafe("Launch Failed");
                 }
             }
@@ -141,10 +148,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
             public void onMultiClick(View v) {
                 String packageName = "com.example.hp";
                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                if(launchIntent != null) {
+                if (launchIntent != null) {
                     startActivity(launchIntent);
-                }
-                else {
+                } else {
                     ToastUtils.showShortSafe("Launch Failed");
                 }
             }

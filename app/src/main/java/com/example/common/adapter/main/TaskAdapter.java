@@ -27,10 +27,9 @@ public class TaskAdapter extends BaseAdapter<Task> {
         Task task = getData().get(position);
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.setText(R.id.tv_content, task.getContent());
-        if(task.isFinish()) {
+        if (task.isFinish()) {
             viewHolder.getView(R.id.riv_check).setBackgroundResource(R.drawable.ic_checked);
-        }
-        else {
+        } else {
             viewHolder.getView(R.id.riv_check).setBackgroundResource(R.drawable.ic_unchecked);
         }
         viewHolder.setOnClickListener(R.id.cv_container, new View.OnClickListener() {

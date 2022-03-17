@@ -182,18 +182,18 @@
                 android:layout_width="@dimen/dp_0"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:bg_color="@color/FFD8CAAF"
-                app:src="@drawable/ic_jump_for_fun"
-                app:title="@string/jump_for_fun" />
+                app:game_bg_color="@color/FFD8CAAF"
+                app:game_src="@drawable/ic_jump_for_fun"
+                app:game_title="@string/jump_for_fun" />
 
             <com.example.common.ui.widget.main.GameView
                 android:id="@+id/gv_cube_hub"
                 android:layout_width="@dimen/dp_0"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:bg_color="@color/FFE0CDCF"
-                app:src="@drawable/ic_cube_hub"
-                app:title="@string/cube_hub" />
+                app:game_bg_color="@color/FFE0CDCF"
+                app:game_src="@drawable/ic_cube_hub"
+                app:game_title="@string/cube_hub" />
 
         </LinearLayout>
 
@@ -272,7 +272,7 @@
             android:layout_marginEnd="@dimen/dp_30"
             android:layout_gravity="center"
             app:bar_color="@color/FFB5C4B1"
-            app:bar_bg_color="@color/FFECECEA"
+            app:bar_bg_color="@color/light_gary"
             app:corner_radius="@dimen/dp_10"
             app:text_size="@dimen/sp_18" />
 

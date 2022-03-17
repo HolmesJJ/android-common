@@ -34,4 +34,10 @@
     <string name="not_check_in_sentence_5">Cheer up!</string>
     <string name="daily_progress">Daily Progress</string>
     <string name="daily_tasks">Daily Tasks</string>
+
+    <!--section-->
+    <string name="tutorial">Tutorial</string>
+    <string name="mouth_interaction">3D Mouth Interaction</string>
+    <string name="pronunciation_exercise">Pronunciation Exercise</string>
+    <string name="mouth_shape_exercise">Mouth Shape Exercise</string>
 </resources>

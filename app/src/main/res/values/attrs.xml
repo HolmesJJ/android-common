@@ -25,8 +25,14 @@
     </declare-styleable>
     <!--游戏-->
     <declare-styleable name="GameView">
-        <attr name="title" format="string"/>
-        <attr name="src" format="reference"/>
-        <attr name="bg_color" format="color"/>
+        <attr name="game_title" format="string"/>
+        <attr name="game_src" format="reference"/>
+        <attr name="game_bg_color" format="color"/>
+    </declare-styleable>
+    <!--Section-->
+    <declare-styleable name="SectionView">
+        <attr name="section_title" format="string"/>
+        <attr name="section_src" format="reference"/>
+        <attr name="section_bg_color" format="color"/>
     </declare-styleable>
 </resources>

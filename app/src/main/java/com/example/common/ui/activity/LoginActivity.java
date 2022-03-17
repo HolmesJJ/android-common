@@ -11,6 +11,7 @@ import com.example.common.base.BaseActivity;
 import com.example.common.databinding.ActivityLoginBinding;
 import com.example.common.listener.OnMultiClickListener;
 import com.example.common.ui.viewmodel.LoginViewModel;
+import com.example.common.utils.ContextUtils;
 import com.example.common.utils.ListenerUtils;
 import com.example.common.utils.ToastUtils;
 
@@ -97,7 +98,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
             stopLoading();
             if (activityAction != null) {
                 try {
-                    Intent intent = new Intent(LoginActivity.this, activityAction);
+                    Intent intent = new Intent(ContextUtils.getContext(), activityAction);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();

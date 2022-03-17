@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.common.ui.viewmodel.SectionViewModel" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/rl_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_20">
+
+        <com.example.common.ui.widget.section.SectionView
+            android:id="@+id/sv_tutorial"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_0"
+            android:layout_weight="1"
+            app:section_bg_color="@color/FFB5C4B1"
+            app:section_src="@drawable/ic_tutorial"
+            app:section_title="@string/tutorial" />
+
+        <com.example.common.ui.widget.section.SectionView
+            android:id="@+id/sv_interaction"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_0"
+            android:layout_weight="1"
+            app:section_bg_color="@color/FFBFBFBF"
+            app:section_src="@drawable/ic_interaction"
+            app:section_title="@string/mouth_interaction" />
+
+        <com.example.common.ui.widget.section.SectionView
+            android:id="@+id/sv_pronunciation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_0"
+            android:layout_weight="1"
+            app:section_bg_color="@color/FFCAC3BB"
+            app:section_src="@drawable/ic_pronunciation"
+            app:section_title="@string/pronunciation_exercise" />
+
+        <com.example.common.ui.widget.section.SectionView
+            android:id="@+id/sv_mouth_shape"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_0"
+            android:layout_weight="1"
+            app:section_bg_color="@color/FFB7B1A5"
+            app:section_src="@drawable/ic_mouth_shape"
+            app:section_title="@string/mouth_shape_exercise" />
+
+    </LinearLayout>
+
+</layout>
