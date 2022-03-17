@@ -41,9 +41,11 @@ public class BarChartView extends View {
     private int mTotalProgress = 100;
     // 当前进度
     private int mProgress;
+    private Context mContext;
 
     public BarChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         // 获取自定义的属性
         initAttrs(context, attrs);
         initVariable(context);
@@ -77,7 +79,7 @@ public class BarChartView extends View {
         mTextPaint = new Paint();
         mTextPaint.setAntiAlias(true);
         mTextPaint.setStyle(Paint.Style.FILL);
-        mTextPaint.setColor(ContextCompat.getColor(context, R.color.white));
+        mTextPaint.setColor(ContextCompat.getColor(context, R.color.FF656565));
         mTextPaint.setTextSize(mTextSize);
 
         Paint.FontMetrics fm = mTextPaint.getFontMetrics();
@@ -103,11 +105,14 @@ public class BarChartView extends View {
             float mProgressWidth = ((float) mProgress / mTotalProgress) * mWidth;
             canvas.drawRoundRect(0, 0, mProgressWidth, mHeight, mCornerRadius, mCornerRadius, mBarPaint);
             if (mProgressWidth / 2 - mTextWidth / 2 > padding) {
+                mTextPaint.setColor(ContextCompat.getColor(mContext, R.color.white));
                 canvas.drawText(txt, mProgressWidth / 2 - mTextWidth / 2, mHeight / 2 + mTextHeight / 4, mTextPaint);
             } else {
+                mTextPaint.setColor(ContextCompat.getColor(mContext, R.color.FF656565));
                 canvas.drawText(txt, padding, mHeight / 2 + mTextHeight / 4, mTextPaint);
             }
         } else {
+            mTextPaint.setColor(ContextCompat.getColor(mContext, R.color.FF656565));
             canvas.drawText(txt, padding, mHeight / 2 + mTextHeight / 4, mTextPaint);
         }
     }
