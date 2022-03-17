@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.example.common.R;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public final class FileUtils {
 
@@ -220,5 +223,43 @@ public final class FileUtils {
             }
         }
         return sb.toString();
+    }
+
+    public static void unzip(File zipFile, File targetDirectory) {
+        ZipInputStream zis = null;
+        try {
+            zis = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
+            ZipEntry ze;
+            int count;
+            byte[] buffer = new byte[8192];
+            while ((ze = zis.getNextEntry()) != null) {
+                File file = new File(targetDirectory, ze.getName());
+                File dir = ze.isDirectory() ? file : file.getParentFile();
+                if (dir == null) {
+                    return;
+                }
+                if (!dir.isDirectory() && !dir.mkdirs()) {
+                    return;
+                }
+                if (ze.isDirectory()) {
+                    continue;
+                }
+                FileOutputStream fout = new FileOutputStream(file);
+                while ((count = zis.read(buffer)) != -1) {
+                    fout.write(buffer, 0, count);
+                }
+                fout.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (zis != null) {
+                    zis.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
