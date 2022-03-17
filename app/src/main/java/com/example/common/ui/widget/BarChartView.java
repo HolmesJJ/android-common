@@ -100,7 +100,7 @@ public class BarChartView extends View {
 
         // 条形
         if (mProgress > 0) {
-            float mProgressWidth = ((float) mProgress / mTotalProgress);
+            float mProgressWidth = ((float) mProgress / mTotalProgress) * mWidth;
             canvas.drawRoundRect(0, 0, mProgressWidth, mHeight, mCornerRadius, mCornerRadius, mBarPaint);
             if (mProgressWidth / 2 - mTextWidth / 2 > padding) {
                 canvas.drawText(txt, mProgressWidth / 2 - mTextWidth / 2, mHeight / 2 + mTextHeight / 4, mTextPaint);
