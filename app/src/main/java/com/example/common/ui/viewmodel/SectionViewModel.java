@@ -40,5 +40,4 @@ public class SectionViewModel extends BaseViewModel {
     public MutableLiveData<Boolean> isShowLoading() {
         return mIsShowLoading;
     }
-
 }

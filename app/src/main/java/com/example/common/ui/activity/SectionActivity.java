@@ -11,12 +11,14 @@ import com.example.common.base.BaseActivity;
 import com.example.common.databinding.ActivitySectionBinding;
 import com.example.common.listener.OnMultiClickListener;
 import com.example.common.ui.viewmodel.SectionViewModel;
+import com.example.common.utils.ContextUtils;
 import com.example.common.utils.ListenerUtils;
 import com.example.common.utils.ToastUtils;
 
 public class SectionActivity extends BaseActivity<ActivitySectionBinding, SectionViewModel> {
 
     private static final String TAG = SectionActivity.class.getSimpleName();
+    private int mEnglishId;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -36,12 +38,15 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
     @Override
     public void initData() {
         super.initData();
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            Bundle bundle = getIntent().getExtras();
+            mEnglishId = bundle.getInt("englishId");
+        }
     }
 
     @Override
     public void initViewObservable() {
         super.initViewObservable();
-        setObserveListener();
         setOnClickListener();
         doIsShowLoading();
     }
@@ -51,14 +56,14 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
         super.onDestroy();
     }
 
-    private void setObserveListener() {
-    }
-
     private void setOnClickListener() {
         ListenerUtils.setOnClickListener(getBinding().svTutorial, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-
+                Intent intent = new Intent(ContextUtils.getContext(), TutorialActivity.class);
+                intent.putExtra("englishId", mEnglishId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         ListenerUtils.setOnClickListener(getBinding().svInteraction, new OnMultiClickListener() {

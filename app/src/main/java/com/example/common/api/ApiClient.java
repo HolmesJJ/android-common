@@ -10,6 +10,7 @@ import com.example.common.api.model.login.PublicKeyResult;
 import com.example.common.api.model.main.DownloadResult;
 import com.example.common.api.model.main.TasksResult;
 import com.example.common.api.model.token.RefreshTokenResult;
+import com.example.common.api.model.tutorial.EnglishResult;
 import com.example.common.config.Config;
 import com.example.common.constants.Constants;
 import com.example.common.network.http.Request;
@@ -93,6 +94,17 @@ public final class ApiClient {
                 .setHeaderMap(headers)
                 .setMethod(Request.RequestMethod.DOWNLOAD.value())
                 .setBody(parameters);
+        return ExecutorRequest.execute(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static Result<EnglishResult> getEnglish(int englishId) {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "bearer " + Config.getToken());
+        Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/english/" + englishId)
+                .setHeaderMap(headers)
+                .setMethod(Request.RequestMethod.GET.value());
         return ExecutorRequest.execute(request);
     }
 }

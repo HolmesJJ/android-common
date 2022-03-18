@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="LockedOrientationActivity"
     package="com.example.common">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -43,15 +44,21 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".init.InitActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.LoginActivity" />
-        <activity android:name=".ui.activity.SectionActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".ui.activity.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.SectionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.TutorialActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -27,6 +27,7 @@ import com.example.common.utils.FileUtils;
 import com.example.common.utils.ListenerUtils;
 import com.example.common.utils.ToastUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,11 +107,19 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     public void onItemListener(int position) {
                         int englishId = tasks.get(position).getEnglishId();
                         if (getViewModel() != null) {
+                            File videoFolder = new File(FileUtils.VIDEO_DIR, String.valueOf(englishId));
+                            if (!videoFolder.exists()) {
+                                videoFolder.mkdirs();
+                            }
+                            File framesFolder = new File(FileUtils.FRAMES_DIR, String.valueOf(englishId));
+                            if (!framesFolder.exists()) {
+                                framesFolder.mkdirs();
+                            }
                             List<DownloadParameter> downloadParameters = new ArrayList<>();
-                            downloadParameters.add(new DownloadParameter(FileUtils.VIDEO_DIR, "tutorial.mp4", "englishId/" + englishId + "/tutorialVideo"));
-                            downloadParameters.add(new DownloadParameter(FileUtils.VIDEO_DIR, "exercise.mp4", "englishId/" + englishId + "/exerciseVideo"));
-                            downloadParameters.add(new DownloadParameter(FileUtils.VIDEO_DIR, "organ.mp4", "englishId/" + englishId + "/organVideo"));
-                            downloadParameters.add(new DownloadParameter(FileUtils.FRAMES_DIR, "frames.zip", "englishId/" + englishId + "/Frames"));
+                            downloadParameters.add(new DownloadParameter(videoFolder.getAbsolutePath(), "tutorial.mp4", "englishId/" + englishId + "/tutorialVideo"));
+                            downloadParameters.add(new DownloadParameter(videoFolder.getAbsolutePath(), "exercise.mp4", "englishId/" + englishId + "/exerciseVideo"));
+                            downloadParameters.add(new DownloadParameter(videoFolder.getAbsolutePath(), "organ.mp4", "englishId/" + englishId + "/organVideo"));
+                            downloadParameters.add(new DownloadParameter(framesFolder.getAbsolutePath(), "frames.zip", "englishId/" + englishId + "/Frames"));
                             getViewModel().download(englishId, downloadParameters);
                         }
                     }
