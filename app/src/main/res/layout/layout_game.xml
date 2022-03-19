@@ -20,7 +20,7 @@
             android:id="@+id/riv_icon"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
-            app:border_color="@color/white" />
+            app:riv_border_color="@color/white" />
 
         <TextView
             android:id="@+id/tv_title"

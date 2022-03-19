@@ -40,4 +40,7 @@
     <string name="mouth_interaction">3D Mouth Interaction</string>
     <string name="pronunciation_exercise">Pronunciation Exercise</string>
     <string name="mouth_shape_exercise">Mouth Shape Exercise</string>
+
+    <!--mouth-->
+    <string name="mouth_out_of_bounds">Please put your mouth in the green square area</string>
 </resources>

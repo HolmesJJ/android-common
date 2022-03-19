@@ -156,6 +156,13 @@ public final class ListenerUtils {
         view.setOnClickListener(listener);
     }
 
+    public static void setOnTouchListener(View view, View.OnTouchListener listener) {
+        if (view == null) {
+            return;
+        }
+        view.setOnTouchListener(listener);
+    }
+
     public static void setCheckChangeListener(CompoundButton view, CompoundButton.OnCheckedChangeListener listener) {
         if (view == null) {
             return;

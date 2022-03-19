@@ -43,9 +43,9 @@ public class GameView extends LinearLayout {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.GameView, 0, 0);
-        mTitle = typeArray.getString(R.styleable.GameView_game_title);
-        mIcon = typeArray.getDrawable(R.styleable.GameView_game_src);
-        mBgColor = typeArray.getColor(R.styleable.GameView_game_bg_color, 0xFFFFFFFF);
+        mTitle = typeArray.getString(R.styleable.GameView_gv_title);
+        mIcon = typeArray.getDrawable(R.styleable.GameView_gv_src);
+        mBgColor = typeArray.getColor(R.styleable.GameView_gv_bg_color, 0xFFFFFFFF);
         cvContainer.setCardBackgroundColor(mBgColor);
         rivIcon.setImageDrawable(mIcon);
         tvTitle.setText(mTitle);

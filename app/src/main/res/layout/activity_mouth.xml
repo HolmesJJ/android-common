@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
             name="viewModel"
-            type="com.example.common.ui.viewmodel.MouthShapeViewModel" />
+            type="com.example.common.ui.viewmodel.MouthViewModel" />
     </data>
 
     <LinearLayout
@@ -39,6 +39,28 @@
             </RelativeLayout>
 
         </com.example.common.ui.widget.FixedAspectRatioRelativeLayout>
+
+        <com.example.common.ui.widget.LongPressView
+            android:id="@+id/lpv_record"
+            android:layout_width="@dimen/dp_100"
+            android:layout_height="@dimen/dp_100"
+            android:layout_marginTop="@dimen/dp_20"
+            app:lpv_radius="@dimen/dp_40"
+            app:lpv_stroke_width="@dimen/dp_5"
+            app:lpv_circle_color="@color/FFB7B1A5"
+            app:lpv_ring_color="@color/FF656565"
+            app:lpv_ring_bg_color="@color/light_gary" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_20"
+            android:layout_marginStart="@dimen/dp_40"
+            android:layout_marginEnd="@dimen/dp_40"
+            android:gravity="center"
+            android:textColor="@color/red"
+            android:textSize="@dimen/sp_18" />
 
     </LinearLayout>
 

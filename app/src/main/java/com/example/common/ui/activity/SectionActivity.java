@@ -83,10 +83,10 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
 
             }
         });
-        ListenerUtils.setOnClickListener(getBinding().svMouthShape, new OnMultiClickListener() {
+        ListenerUtils.setOnClickListener(getBinding().svMouth, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-                Intent intent = new Intent(ContextUtils.getContext(), MouthShapeActivity.class);
+                Intent intent = new Intent(ContextUtils.getContext(), MouthActivity.class);
                 intent.putExtra("englishId", mEnglishId);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);

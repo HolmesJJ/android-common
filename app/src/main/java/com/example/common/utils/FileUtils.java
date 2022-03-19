@@ -33,18 +33,10 @@ public final class FileUtils {
     public static final String VIDEO_DIR = APP_DIR + "Video" + File.separator;
     public static final String FRAMES_DIR = APP_DIR + "Frames" + File.separator;
     public static final String CAPTURE_DIR = APP_DIR + "Capture" + File.separator;
-    public static final String CAPTURE_VIDEO_DIR = CAPTURE_DIR + "Video" + File.separator;
-    public static final String CAPTURE_AUDIO_DIR = CAPTURE_DIR + "Audio" + File.separator;
-    public static final String CAPTURE_COMBINE_DIR = CAPTURE_DIR + "Combine" + File.separator;
     // Model
     public static final String MODEL_DIR = APP_DIR + "ZeuseesFaceTracking" + File.separator;
     public static final String MODEL_PATH = MODEL_DIR + "models" + File.separator;
     public static final String ASSET_PATH = "ZeuseesFaceTracking";
-    // Collect Dataset
-    public static final String DATASET_DIR = CAPTURE_DIR + "Dataset" + File.separator;
-    public static final String SMALL_MOUTH_SHAPE_DATASET_DIR = DATASET_DIR + "Small" + File.separator;
-    public static final String NORMAL_MOUTH_SHAPE_DATASET_DIR = DATASET_DIR + "Normal" + File.separator;
-    public static final String BIG_MOUTH_SHAPE_DATASET_DIR = DATASET_DIR + "Big" + File.separator;
 
     private FileUtils() {
     }
@@ -75,34 +67,6 @@ public final class FileUtils {
         File captureFolder = new File(CAPTURE_DIR);
         if (!captureFolder.exists()) {
             captureFolder.mkdirs();
-        }
-        File captureVideoFolder = new File(CAPTURE_VIDEO_DIR);
-        if (!captureVideoFolder.exists()) {
-            captureVideoFolder.mkdirs();
-        }
-        File captureAudioFolder = new File(CAPTURE_AUDIO_DIR);
-        if (!captureAudioFolder.exists()) {
-            captureAudioFolder.mkdirs();
-        }
-        File captureCombineFolder = new File(CAPTURE_COMBINE_DIR);
-        if (!captureCombineFolder.exists()) {
-            captureCombineFolder.mkdirs();
-        }
-        File datasetFolder = new File(DATASET_DIR);
-        if (!datasetFolder.exists()) {
-            datasetFolder.mkdirs();
-        }
-        File smallMouthShapeDatasetFolder = new File(SMALL_MOUTH_SHAPE_DATASET_DIR);
-        if (!smallMouthShapeDatasetFolder.exists()) {
-            smallMouthShapeDatasetFolder.mkdirs();
-        }
-        File normalMouthShapeDatasetFolder = new File(NORMAL_MOUTH_SHAPE_DATASET_DIR);
-        if (!normalMouthShapeDatasetFolder.exists()) {
-            normalMouthShapeDatasetFolder.mkdirs();
-        }
-        File bigMouthShapeDatasetFolder = new File(BIG_MOUTH_SHAPE_DATASET_DIR);
-        if (!bigMouthShapeDatasetFolder.exists()) {
-            bigMouthShapeDatasetFolder.mkdirs();
         }
     }
 

@@ -38,9 +38,9 @@ public class SectionView extends LinearLayout {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.SectionView, 0, 0);
-        mTitle = typeArray.getString(R.styleable.SectionView_section_title);
-        mIcon = typeArray.getDrawable(R.styleable.SectionView_section_src);
-        mBgColor = typeArray.getColor(R.styleable.SectionView_section_bg_color, 0xFFFFFFFF);
+        mTitle = typeArray.getString(R.styleable.SectionView_sv_title);
+        mIcon = typeArray.getDrawable(R.styleable.SectionView_sv_src);
+        mBgColor = typeArray.getColor(R.styleable.SectionView_sv_bg_color, 0xFFFFFFFF);
         cvContainer.setCardBackgroundColor(mBgColor);
         rivIcon.setImageDrawable(mIcon);
         tvTitle.setText(mTitle);

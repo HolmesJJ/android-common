@@ -22,36 +22,36 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_0"
             android:layout_weight="1"
-            app:section_bg_color="@color/FFB5C4B1"
-            app:section_src="@drawable/ic_tutorial"
-            app:section_title="@string/tutorial" />
+            app:sv_bg_color="@color/FFB5C4B1"
+            app:sv_src="@drawable/ic_tutorial"
+            app:sv_title="@string/tutorial" />
 
         <com.example.common.ui.widget.section.SectionView
             android:id="@+id/sv_interaction"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_0"
             android:layout_weight="1"
-            app:section_bg_color="@color/FFBFBFBF"
-            app:section_src="@drawable/ic_interaction"
-            app:section_title="@string/mouth_interaction" />
+            app:sv_bg_color="@color/FFBFBFBF"
+            app:sv_src="@drawable/ic_interaction"
+            app:sv_title="@string/mouth_interaction" />
 
         <com.example.common.ui.widget.section.SectionView
             android:id="@+id/sv_pronunciation"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_0"
             android:layout_weight="1"
-            app:section_bg_color="@color/FFCAC3BB"
-            app:section_src="@drawable/ic_pronunciation"
-            app:section_title="@string/pronunciation_exercise" />
+            app:sv_bg_color="@color/FFCAC3BB"
+            app:sv_src="@drawable/ic_pronunciation"
+            app:sv_title="@string/pronunciation_exercise" />
 
         <com.example.common.ui.widget.section.SectionView
-            android:id="@+id/sv_mouth_shape"
+            android:id="@+id/sv_mouth"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_0"
             android:layout_weight="1"
-            app:section_bg_color="@color/FFB7B1A5"
-            app:section_src="@drawable/ic_mouth_shape"
-            app:section_title="@string/mouth_shape_exercise" />
+            app:sv_bg_color="@color/FFB7B1A5"
+            app:sv_src="@drawable/ic_mouth_shape"
+            app:sv_title="@string/mouth_shape_exercise" />
 
     </LinearLayout>
 
