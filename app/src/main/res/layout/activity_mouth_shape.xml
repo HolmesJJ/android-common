@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.common.ui.viewmodel.MouthShapeViewModel" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/rl_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <com.example.common.ui.widget.FixedAspectRatioRelativeLayout
+            android:id="@+id/farrl_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/camera_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <SurfaceView
+                    android:id="@+id/sv_camera"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <SurfaceView
+                    android:id="@+id/sv_overlap"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
+
+        </com.example.common.ui.widget.FixedAspectRatioRelativeLayout>
+
+    </LinearLayout>
+
+</layout>

@@ -36,6 +36,10 @@ public final class FileUtils {
     public static final String CAPTURE_VIDEO_DIR = CAPTURE_DIR + "Video" + File.separator;
     public static final String CAPTURE_AUDIO_DIR = CAPTURE_DIR + "Audio" + File.separator;
     public static final String CAPTURE_COMBINE_DIR = CAPTURE_DIR + "Combine" + File.separator;
+    // Model
+    public static final String MODEL_DIR = APP_DIR + "ZeuseesFaceTracking" + File.separator;
+    public static final String MODEL_PATH = MODEL_DIR + "models" + File.separator;
+    public static final String ASSET_PATH = "ZeuseesFaceTracking";
     // Collect Dataset
     public static final String DATASET_DIR = CAPTURE_DIR + "Dataset" + File.separator;
     public static final String SMALL_MOUTH_SHAPE_DATASET_DIR = DATASET_DIR + "Small" + File.separator;

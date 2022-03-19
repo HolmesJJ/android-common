@@ -9,6 +9,7 @@ import com.example.common.api.model.tutorial.EnglishResult;
 import com.example.common.base.BaseViewModel;
 import com.example.common.network.http.Result;
 import com.example.common.thread.ThreadManager;
+import com.example.common.utils.RefreshTokenUtils;
 import com.example.common.utils.ToastUtils;
 
 public class TutorialViewModel extends BaseViewModel {
@@ -40,6 +41,12 @@ public class TutorialViewModel extends BaseViewModel {
             @Override
             public void run() {
                 Result<EnglishResult> englishResult = ApiClient.getEnglish(englishId);
+                if (englishResult.isTokenTimeout() || englishResult.isForbidden()) {
+                    RefreshTokenUtils.refreshToken();
+                    mIsShowLoading.postValue(false);
+                    initData(englishId);
+                    return;
+                }
                 if (!englishResult.isSuccess()) {
                     mIsShowLoading.postValue(false);
                     ToastUtils.showShortSafe("Get English Failed");

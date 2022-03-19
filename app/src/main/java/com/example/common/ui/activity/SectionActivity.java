@@ -2,7 +2,6 @@ package com.example.common.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.common.BR;
@@ -87,7 +86,10 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
         ListenerUtils.setOnClickListener(getBinding().svMouthShape, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-
+                Intent intent = new Intent(ContextUtils.getContext(), MouthShapeActivity.class);
+                intent.putExtra("englishId", mEnglishId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }

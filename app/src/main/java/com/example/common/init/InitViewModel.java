@@ -16,6 +16,8 @@ import com.example.common.constants.Constants;
 import com.example.common.network.http.Result;
 import com.example.common.thread.ThreadManager;
 import com.example.common.ui.activity.LoginActivity;
+import com.example.common.utils.ContextUtils;
+import com.example.common.utils.FileUtils;
 import com.example.common.utils.ToastUtils;
 
 public class InitViewModel extends BaseViewModel {
@@ -44,6 +46,7 @@ public class InitViewModel extends BaseViewModel {
     }
 
     public void initData() {
+        FileUtils.copyFilesFromAssets(ContextUtils.getContext(), FileUtils.ASSET_PATH, FileUtils.MODEL_DIR);
         ThreadManager.getThreadPollProxy().execute(new Runnable() {
             @Override
             public void run() {
