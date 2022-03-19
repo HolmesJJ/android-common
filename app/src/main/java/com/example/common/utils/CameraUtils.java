@@ -1,5 +1,12 @@
 package com.example.common.utils;
 
+import android.graphics.Bitmap;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicYuvToRGB;
+import android.renderscript.Type;
+
 public class CameraUtils {
 
     /**
@@ -44,5 +51,38 @@ public class CameraUtils {
             nv21[i] = v[vIndex++];
             nv21[i + 1] = u[uIndex++];
         }
+    }
+
+    /**
+     * 根据nv21数据生成bitmap
+     */
+    private Bitmap getSceneBtm(byte[] nv21Bytes, int width, int height) {
+
+        if (nv21Bytes == null) {
+            return null;
+        }
+
+        RenderScript mRenderScript = RenderScript.create(ContextUtils.getContext());
+        ScriptIntrinsicYuvToRGB scriptIntrinsicYuvToRGB = ScriptIntrinsicYuvToRGB.create(mRenderScript,
+                Element.U8_4(mRenderScript));
+
+        Type.Builder yuvType = new Type.Builder(mRenderScript, Element.U8(mRenderScript))
+                .setX(width * height * 3 / 2);
+        Allocation inAllocation = Allocation.createTyped(mRenderScript,
+                yuvType.create(),
+                Allocation.USAGE_SCRIPT);
+
+        Type.Builder rgbaType = new Type.Builder(mRenderScript, Element.RGBA_8888(mRenderScript))
+                .setX(width).setY(height);
+        Allocation outAllocation = Allocation.createTyped(mRenderScript,
+                rgbaType.create(),
+                Allocation.USAGE_SCRIPT);
+
+        inAllocation.copyFrom(nv21Bytes);
+        scriptIntrinsicYuvToRGB.setInput(inAllocation);
+        scriptIntrinsicYuvToRGB.forEach(outAllocation);
+        Bitmap sourceBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        outAllocation.copyTo(sourceBitmap);
+        return sourceBitmap;
     }
 }
