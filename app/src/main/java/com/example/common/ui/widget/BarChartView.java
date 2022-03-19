@@ -55,10 +55,10 @@ public class BarChartView extends View {
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.BarChartView, 0, 0);
-        mBarColor = typeArray.getColor(R.styleable.BarChartView_bar_color, 0xFFFFFFFF);
-        mBarBgColor = typeArray.getColor(R.styleable.BarChartView_bar_bg_color, 0xFFFFFFFF);
-        mCornerRadius = typeArray.getDimension(R.styleable.BarChartView_corner_radius, 0xFFFFFFFF);
-        mTextSize = typeArray.getDimension(R.styleable.BarChartView_text_size, 0xFFFFFFFF);
+        mBarColor = typeArray.getColor(R.styleable.BarChartView_bcv_color, 0xFFFFFFFF);
+        mBarBgColor = typeArray.getColor(R.styleable.BarChartView_bcv_bg_color, 0xFFFFFFFF);
+        mCornerRadius = typeArray.getDimension(R.styleable.BarChartView_bcv_corner_radius, 0xFFFFFFFF);
+        mTextSize = typeArray.getDimension(R.styleable.BarChartView_bcv_text_size, 0xFFFFFFFF);
     }
 
     // 初始化画笔

@@ -12,7 +12,7 @@ import android.view.View;
 
 import com.example.common.R;
 
-public class DonutChartView extends View {
+public class LongPressView extends View {
 
     // 画实心圆的画笔
     private Paint mCirclePaint;
@@ -47,7 +47,7 @@ public class DonutChartView extends View {
     // 当前进度
     private int mProgress;
 
-    public DonutChartView(Context context, AttributeSet attrs) {
+    public LongPressView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // 获取自定义的属性
         initAttrs(context, attrs);
@@ -57,12 +57,12 @@ public class DonutChartView extends View {
     // 属性
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typeArray = context.getTheme().obtainStyledAttributes(attrs,
-                R.styleable.DonutChartView, 0, 0);
-        mRadius = typeArray.getDimension(R.styleable.DonutChartView_dcv_radius, 80);
-        mStrokeWidth = typeArray.getDimension(R.styleable.DonutChartView_dcv_stroke_width, 10);
-        mCircleColor = typeArray.getColor(R.styleable.DonutChartView_dcv_circle_color, 0xFFFFFFFF);
-        mRingColor = typeArray.getColor(R.styleable.DonutChartView_dcv_ring_color, 0xFFFFFFFF);
-        mRingBgColor = typeArray.getColor(R.styleable.DonutChartView_dcv_ring_bg_color, 0xFFFFFFFF);
+                R.styleable.LongPressView, 0, 0);
+        mRadius = typeArray.getDimension(R.styleable.LongPressView_lpv_radius, 80);
+        mStrokeWidth = typeArray.getDimension(R.styleable.LongPressView_lpv_stroke_width, 10);
+        mCircleColor = typeArray.getColor(R.styleable.LongPressView_lpv_circle_color, 0xFFFFFFFF);
+        mRingColor = typeArray.getColor(R.styleable.LongPressView_lpv_ring_color, 0xFFFFFFFF);
+        mRingBgColor = typeArray.getColor(R.styleable.LongPressView_lpv_ring_bg_color, 0xFFFFFFFF);
 
         mRingRadius = mRadius + mStrokeWidth / 2;
     }

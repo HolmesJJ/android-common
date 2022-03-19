@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RoundImageView">
-        <attr name="border_width" format="dimension" />
-        <attr name="border_color" format="color" />
+        <attr name="riv_border_width" format="dimension" />
+        <attr name="riv_border_color" format="color" />
     </declare-styleable>
     <declare-styleable name="FixedAspectRatioRelativeLayout">
         <attr name="aspect_ratio_width" format="integer" />
@@ -10,17 +10,25 @@
     </declare-styleable>
     <!--圆弧进度条-->
     <declare-styleable name="DonutChartView">
-        <attr name="radius" format="dimension"/>
-        <attr name="stroke_width" format="dimension"/>
-        <attr name="circle_color" format="color"/>
-        <attr name="ring_color" format="color"/>
-        <attr name="ring_bg_color" format="color"/>
+        <attr name="dcv_radius" format="dimension"/>
+        <attr name="dcv_stroke_width" format="dimension"/>
+        <attr name="dcv_circle_color" format="color"/>
+        <attr name="dcv_ring_color" format="color"/>
+        <attr name="dcv_ring_bg_color" format="color"/>
+    </declare-styleable>
+    <!--长按进度条-->
+    <declare-styleable name="LongPressView">
+        <attr name="lpv_radius" format="dimension"/>
+        <attr name="lpv_stroke_width" format="dimension"/>
+        <attr name="lpv_circle_color" format="color"/>
+        <attr name="lpv_ring_color" format="color"/>
+        <attr name="lpv_ring_bg_color" format="color"/>
     </declare-styleable>
     <!--条形进度条-->
     <declare-styleable name="BarChartView">
-        <attr name="bar_color" format="color"/>
-        <attr name="bar_bg_color" format="color"/>
-        <attr name="corner_radius" format="dimension"/>
-        <attr name="text_size" format="dimension"/>
+        <attr name="bcv_color" format="color"/>
+        <attr name="bcv_bg_color" format="color"/>
+        <attr name="bcv_corner_radius" format="dimension"/>
+        <attr name="bcv_text_size" format="dimension"/>
     </declare-styleable>
 </resources>
