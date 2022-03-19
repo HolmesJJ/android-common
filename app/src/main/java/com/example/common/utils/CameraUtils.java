@@ -7,7 +7,10 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.renderscript.Type;
 
-public class CameraUtils {
+public final class CameraUtils {
+
+    private CameraUtils() {
+    }
 
     /**
      * 将Y:U:V == 4:2:2的数据转换为nv21
