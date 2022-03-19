@@ -56,7 +56,7 @@ public class CameraUtils {
     /**
      * 根据nv21数据生成bitmap
      */
-    private Bitmap getSceneBtm(byte[] nv21Bytes, int width, int height) {
+    public static Bitmap getSceneBtm(byte[] nv21Bytes, int width, int height) {
 
         if (nv21Bytes == null) {
             return null;
