@@ -58,7 +58,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
 
     @Override
     protected void onDestroy() {
-        ListenerUtils.remove(getViewModel().getEnableSignIn());
+        if (getViewModel() != null) {
+            ListenerUtils.remove(getViewModel().getEnableSignIn());
+        }
         super.onDestroy();
     }
 
@@ -82,6 +84,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
     }
 
     private void setEnableSignInListener() {
+        if (getViewModel() == null) {
+            return;
+        }
         ListenerUtils.addSignalOnPropertyChangeCallback(getViewModel().getEnableSignIn(), (observable, i, value) -> {
             if (value) {
                 getBinding().btnSignIn.setBackgroundResource(R.drawable.bg_btn_enable_round);
@@ -94,6 +99,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
     }
 
     private void setObserveListener() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().getActivityAction().observe(this, activityAction -> {
             if (activityAction != null) {
                 try {
@@ -125,6 +133,9 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
      * 控制进度圈显示
      */
     public void doIsShowLoading() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().isShowLoading().observe(this, isShowing -> {
             if (isShowing) {
                 showLoading(false);

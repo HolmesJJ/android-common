@@ -596,6 +596,9 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
      * 控制进度圈显示
      */
     public void doIsShowLoading() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().isShowLoading().observe(this, isShowing -> {
             if (isShowing) {
                 showLoading(false);

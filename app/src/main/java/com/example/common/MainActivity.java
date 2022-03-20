@@ -100,6 +100,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     }
 
     private void setObserveListener() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().getTasks().observe(this, tasks -> {
             if (tasks != null) {
                 mTaskAdapter = new TaskAdapter(ContextUtils.getContext(), tasks, new TaskAdapter.OnItemListener() {
@@ -247,6 +250,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
      * 控制进度圈显示
      */
     public void doIsShowLoading() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().isShowLoading().observe(this, isShowing -> {
             if (isShowing) {
                 showLoading(false);

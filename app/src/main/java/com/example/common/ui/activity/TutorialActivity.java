@@ -72,6 +72,9 @@ public class TutorialActivity extends BaseActivity<ActivityTutorialBinding, Tuto
     }
 
     private void setObserveListener() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().getDetail().observe(this, detail -> {
             if (detail != null) {
                 getBinding().tvDetail.setText(detail.replace("\\n", "\n\n"));
@@ -113,6 +116,9 @@ public class TutorialActivity extends BaseActivity<ActivityTutorialBinding, Tuto
      * 控制进度圈显示
      */
     public void doIsShowLoading() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().isShowLoading().observe(this, isShowing -> {
             if (isShowing) {
                 showLoading(false);

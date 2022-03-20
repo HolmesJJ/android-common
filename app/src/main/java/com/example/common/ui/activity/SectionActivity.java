@@ -98,6 +98,9 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
      * 控制进度圈显示
      */
     public void doIsShowLoading() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().isShowLoading().observe(this, isShowing -> {
             if (isShowing) {
                 showLoading(false);
