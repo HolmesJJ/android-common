@@ -1,5 +1,6 @@
 package com.example.common.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -8,8 +9,11 @@ import android.hardware.Camera;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
 import android.widget.MediaController;
 
 import androidx.annotation.NonNull;
@@ -27,6 +31,7 @@ import com.example.common.thread.CustomThreadPool;
 import com.example.common.ui.viewmodel.SpeechViewModel;
 import com.example.common.utils.ContextUtils;
 import com.example.common.utils.FileUtils;
+import com.example.common.utils.ListenerUtils;
 
 import java.io.File;
 
@@ -47,13 +52,17 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     private GLFrame mFrame;
     private GLBitmap mBitmap;
 
+    private Handler mHandler;
+
     private File mFramesFolder;
     private int mCountFrame = 0;
 
     private byte[] mRGBCameraTrackNv21;
     private boolean mIsRGBCameraNv21Ready = false;
+    private boolean mIsRecording = false;
 
     private int mEnglishId;
+    private int mCurProgress;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -77,6 +86,9 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
             Bundle bundle = getIntent().getExtras();
             mEnglishId = bundle.getInt("englishId");
         }
+        if (mHandler == null) {
+            mHandler = new Handler();
+        }
         getBinding().svOverlap.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         mFramesFolder = new File(FileUtils.FRAMES_DIR + mEnglishId);
         initCamera();
@@ -88,6 +100,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     public void initViewObservable() {
         super.initViewObservable();
         setObserveListener();
+        setOnTouchListener();
         doIsShowLoading();
     }
 
@@ -108,6 +121,10 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     @Override
     protected void onDestroy() {
         releaseCamera();
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
         super.onDestroy();
     }
 
@@ -177,6 +194,51 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
             getBinding().ivMouthFrame.setImageBitmap(frameBitmap);
         });
     }
+
+    private void setOnTouchListener() {
+        ListenerUtils.setOnTouchListener(getBinding().lpvRecord, new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mIsRecording = true;
+                        mHandler.postDelayed(mProgressRunnable, 50);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (mIsRecording) {
+                            mHandler.removeCallbacks(mProgressRunnable);
+                            getBinding().lpvRecord.setProgress(0);
+                            mCurProgress = 0;
+                            mIsRecording = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
+    private final Runnable mProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            getBinding().lpvRecord.setProgress(mCurProgress);
+            int MAX_PROGRESS = 100;
+            if (mCurProgress < MAX_PROGRESS) {
+                mCurProgress++;
+                mHandler.postDelayed(mProgressRunnable, 50);
+            } else {
+                if (mIsRecording) {
+                    mHandler.removeCallbacks(mProgressRunnable);
+                    getBinding().lpvRecord.setProgress(0);
+                    mCurProgress = 0;
+                    mIsRecording = false;
+                }
+            }
+        }
+    };
 
     private void initCamera() {
         mFramebuffer = new GLFramebuffer();
