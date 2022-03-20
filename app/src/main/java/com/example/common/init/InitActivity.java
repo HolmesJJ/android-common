@@ -87,6 +87,9 @@ public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewMode
     }
 
     private void setObserveListener() {
+        if (getViewModel() == null) {
+            return;
+        }
         getViewModel().getActivityAction().observe(this, activityAction -> {
             stopLoading();
             Intent intent = new Intent(ContextUtils.getContext(), activityAction);
