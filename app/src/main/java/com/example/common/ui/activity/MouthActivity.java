@@ -2,12 +2,9 @@ package com.example.common.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,7 +24,6 @@ import com.example.common.landmark.EGLUtils;
 import com.example.common.landmark.GLBitmap;
 import com.example.common.landmark.GLFrame;
 import com.example.common.landmark.GLFramebuffer;
-import com.example.common.landmark.GLPoints;
 import com.example.common.model.mouth.Mouth;
 import com.example.common.thread.CustomThreadPool;
 import com.example.common.ui.viewmodel.MouthViewModel;
@@ -51,16 +47,11 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     private final ArrayList<Mouth> mouths = new ArrayList<>();
 
     private CameraOverlap mCameraOverlap;
-    private Paint mRectPaint;
-    private Paint mBorderPaint;
-    private Paint mLinePaint;
-    private Paint mPointPaint;
     private Matrix mMatrix;
 
     private EGLUtils mEglUtils;
     private GLFramebuffer mFramebuffer;
     private GLFrame mFrame;
-    private GLPoints mPoints;
     private GLBitmap mBitmap;
 
     private Handler mHandler;
@@ -68,7 +59,8 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     private byte[] mRGBCameraTrackNv21;
     private float[] mMouthPoints;
     private boolean mIsRGBCameraNv21Ready = false;
-    private boolean isRecording = false;
+    private boolean mIsRecording = false;
+    private boolean mIsMouthOutOfBounds = false;
 
     private int mEnglishId;
     private int mCurProgress;
@@ -101,13 +93,13 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         // Load Model
         FaceTracking.getInstance().FaceTrackingInit(FileUtils.MODEL_PATH, CameraOverlap.PREVIEW_HEIGHT, CameraOverlap.PREVIEW_WIDTH);
         getBinding().svOverlap.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        initPaint();
         initCamera();
     }
 
     @Override
     public void initViewObservable() {
         super.initViewObservable();
+        setObserveListener();
         setOnTouchListener();
         doIsShowLoading();
     }
@@ -150,7 +142,6 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
             mFramebuffer.initFramebuffer();
             mFrame.initFrame();
             mFrame.setSize(getBinding().svCamera.getWidth(), getBinding().svCamera.getHeight(), CameraOverlap.PREVIEW_HEIGHT, CameraOverlap.PREVIEW_WIDTH);
-            mPoints.initPoints();
             mBitmap.initFrame(CameraOverlap.PREVIEW_HEIGHT, CameraOverlap.PREVIEW_WIDTH);
             mMatrix.setScale(getBinding().svCamera.getWidth() / (float) CameraOverlap.PREVIEW_HEIGHT, getBinding().svCamera.getHeight() / (float) CameraOverlap.PREVIEW_WIDTH);
             mCameraOverlap.openCamera(mFramebuffer.getSurfaceTexture());
@@ -190,6 +181,15 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         }
     }
 
+    private void setObserveListener() {
+        if (getViewModel() == null) {
+            return;
+        }
+        getViewModel().getMessage().observe(this, message -> {
+            getBinding().tvMessage.setText(message);
+        });
+    }
+
     private void setOnTouchListener() {
         ListenerUtils.setOnTouchListener(getBinding().lpvRecord, new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
@@ -198,15 +198,15 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mouths.clear();
-                        isRecording = true;
+                        mIsRecording = true;
                         mHandler.postDelayed(mProgressRunnable, 50);
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (isRecording) {
+                        if (mIsRecording) {
                             mHandler.removeCallbacks(mProgressRunnable);
                             getBinding().lpvRecord.setProgress(0);
                             mCurProgress = 0;
-                            isRecording = false;
+                            mIsRecording = false;
                             if (getViewModel() != null) {
                                 getViewModel().process(mEnglishId, mouths);
                             }
@@ -229,11 +229,11 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
                 mCurProgress++;
                 mHandler.postDelayed(mProgressRunnable, 50);
             } else {
-                if (isRecording) {
+                if (mIsRecording) {
                     mHandler.removeCallbacks(mProgressRunnable);
                     getBinding().lpvRecord.setProgress(0);
                     mCurProgress = 0;
-                    isRecording = false;
+                    mIsRecording = false;
                     if (getViewModel() != null) {
                         getViewModel().process(mEnglishId, mouths);
                     }
@@ -242,32 +242,9 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         }
     };
 
-    private void initPaint() {
-        int strokeWidth = Math.max(CameraOverlap.PREVIEW_HEIGHT / 240, 2);
-        // Rectangle
-        mRectPaint = new Paint();
-        mRectPaint.setColor(Color.BLACK);
-        mRectPaint.setStyle(Paint.Style.FILL);
-        // Border
-        mBorderPaint = new Paint();
-        mBorderPaint.setColor(Color.GREEN);
-        mBorderPaint.setStrokeWidth(strokeWidth);
-        mBorderPaint.setStyle(Paint.Style.STROKE);
-        // Line
-        mLinePaint = new Paint();
-        mLinePaint.setColor(Color.RED);
-        mLinePaint.setStrokeWidth(strokeWidth);
-        mLinePaint.setStyle(Paint.Style.STROKE);
-        // Point
-        mPointPaint = new Paint();
-        mPointPaint.setColor(Color.RED);
-        mPointPaint.setStyle(Paint.Style.FILL);
-    }
-
     private void initCamera() {
         mFramebuffer = new GLFramebuffer();
         mFrame = new GLFrame();
-        mPoints = new GLPoints();
         mBitmap = new GLBitmap(MouthActivity.this, R.drawable.ic_avatar); // 任意定义一张图
         mMatrix = new Matrix();
         getBinding().svCamera.getHolder().addCallback(this);
@@ -292,8 +269,18 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
             if (faceActions == null || faceActions.size() == 0) {
                 clearCanvas();
             }
+            mIsMouthOutOfBounds = false;
             draw(faceActions);
-            if (isRecording) {
+            if (mIsMouthOutOfBounds) {
+                if (getViewModel() != null) {
+                    getViewModel().getMessage().postValue(getString(R.string.mouth_out_of_bounds));
+                }
+            } else {
+                if (getViewModel() != null) {
+                    getViewModel().getMessage().postValue("");
+                }
+            }
+            if (mIsRecording) {
                 byte[] data = new byte[CameraOverlap.PREVIEW_WIDTH * CameraOverlap.PREVIEW_HEIGHT * 2];
                 System.arraycopy(mRGBCameraTrackNv21, 0, data, 0, mRGBCameraTrackNv21.length);
                 float[] mouthPoints = new float[24 * 2];
@@ -318,10 +305,6 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         if (mFrame != null) {
             mFrame.release();
             mFrame = null;
-        }
-        if (mPoints != null) {
-            mPoints.release();
-            mPoints = null;
         }
         if (mBitmap != null) {
             mBitmap.release();
@@ -348,7 +331,6 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
                 return;
             }
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-            // drawRectangle(canvas);
             drawBorder(canvas);
             drawFaces(canvas, faceActions);
             getBinding().svOverlap.getHolder().unlockCanvasAndPost(canvas);
@@ -356,32 +338,29 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     }
 
     private void drawBorder(Canvas canvas) {
-        canvas.save();
-        canvas.setMatrix(mMatrix);
         // 正方形框
         int left = CameraOverlap.PREVIEW_HEIGHT / 3;
         int top = CameraOverlap.PREVIEW_WIDTH / 8 * 5;
         int right = CameraOverlap.PREVIEW_HEIGHT / 3 * 2;
         int bottom = CameraOverlap.PREVIEW_WIDTH / 8 * 5 + (right - left);
-        Rect rectangle = new Rect(left, top, right, bottom);
-        canvas.drawRect(rectangle, mBorderPaint);
-        canvas.restore();
+        if (getViewModel() != null) {
+            getViewModel().drawBorder(canvas, mMatrix, left, top, right, bottom);
+        }
     }
 
     private void drawFaces(Canvas canvas, List<Face> faceActions) {
         if (faceActions != null && faceActions.size() > 0) {
             for (Face face : faceActions) {
-                drawLip(face);
+                drawLip(canvas, face);
             }
         }
     }
 
-    private void drawLip(Face face) {
+    private void drawLip(Canvas canvas, Face face) {
         boolean rotate270 = mCameraOverlap.getOrientation() == 270;
         // 嘴巴只有20个点，需要一笔画完整个嘴巴，因此多出了4个重复点
         Arrays.fill(mMouthPoints, 0);
-        boolean mouthOutOfBounds = false;
-        for(int i = 0 ; i < 106 ; i++) {
+        for (int i = 0; i < 106; i++) {
             int x;
             if (rotate270) {
                 x = face.landmarks[i * 2];
@@ -403,184 +382,157 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
             // 下嘴唇下半部分
             // i == 65, i == 64, i == 32, i == 30, i == 4
             if (i == 45) {
-                mMouthPoints[0] = view2openglX(x);
-                mMouthPoints[1] = view2openglY(y);
-                mMouthPoints[24] = view2openglX(x);
-                mMouthPoints[25] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[0] = x;
+                mMouthPoints[1] = y;
+                mMouthPoints[24] = x;
+                mMouthPoints[25] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 37) {
-                mMouthPoints[2] = view2openglX(x);
-                mMouthPoints[3] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[2] = x;
+                mMouthPoints[3] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 39) {
-                mMouthPoints[4] = view2openglX(x);
-                mMouthPoints[5] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[4] = x;
+                mMouthPoints[5] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 38) {
-                mMouthPoints[6] = view2openglX(x);
-                mMouthPoints[7] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[6] = x;
+                mMouthPoints[7] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 26) {
-                mMouthPoints[8] = view2openglX(x);
-                mMouthPoints[9] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[8] = x;
+                mMouthPoints[9] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 33) {
-                mMouthPoints[10] = view2openglX(x);
-                mMouthPoints[11] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[10] = x;
+                mMouthPoints[11] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 50) {
-                mMouthPoints[12] = view2openglX(x);
-                mMouthPoints[13] = view2openglY(y);
-                mMouthPoints[36] = view2openglX(x);
-                mMouthPoints[37] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[12] = x;
+                mMouthPoints[13] = y;
+                mMouthPoints[36] = x;
+                mMouthPoints[37] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 42) {
-                mMouthPoints[14] = view2openglX(x);
-                mMouthPoints[15] = view2openglY(y);
-                mMouthPoints[38] = view2openglX(x);
-                mMouthPoints[39] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[14] = x;
+                mMouthPoints[15] = y;
+                mMouthPoints[38] = x;
+                mMouthPoints[39] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 25) {
-                mMouthPoints[16] = view2openglX(x);
-                mMouthPoints[17] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[16] = x;
+                mMouthPoints[17] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 36) {
-                mMouthPoints[18] = view2openglX(x);
-                mMouthPoints[19] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[18] = x;
+                mMouthPoints[19] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 40) {
-                mMouthPoints[20] = view2openglX(x);
-                mMouthPoints[21] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[20] = x;
+                mMouthPoints[21] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 61) {
-                mMouthPoints[22] = view2openglX(x);
-                mMouthPoints[23] = view2openglY(y);
-                mMouthPoints[46] = view2openglX(x);
-                mMouthPoints[47] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[22] = x;
+                mMouthPoints[23] = y;
+                mMouthPoints[46] = x;
+                mMouthPoints[47] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 65) {
-                mMouthPoints[26] = view2openglX(x);
-                mMouthPoints[27] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[26] = x;
+                mMouthPoints[27] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 64) {
-                mMouthPoints[28] = view2openglX(x);
-                mMouthPoints[29] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[28] = x;
+                mMouthPoints[29] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 32) {
-                mMouthPoints[30] = view2openglX(x);
-                mMouthPoints[31] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[30] = x;
+                mMouthPoints[31] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 30) {
-                mMouthPoints[32] = view2openglX(x);
-                mMouthPoints[33] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[32] = x;
+                mMouthPoints[33] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 4) {
-                mMouthPoints[34] = view2openglX(x);
-                mMouthPoints[35] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[34] = x;
+                mMouthPoints[35] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 2) {
-                mMouthPoints[40] = view2openglX(x);
-                mMouthPoints[41] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[40] = x;
+                mMouthPoints[41] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 103) {
-                mMouthPoints[42] = view2openglX(x);
-                mMouthPoints[43] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[42] = x;
+                mMouthPoints[43] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
             if (i == 63) {
-                mMouthPoints[44] = view2openglX(x);
-                mMouthPoints[45] = view2openglY(y);
-                if (!mouthOutOfBounds) {
-                    mouthOutOfBounds = checkLipLocation(x, y);
+                mMouthPoints[44] = x;
+                mMouthPoints[45] = y;
+                if (!mIsMouthOutOfBounds) {
+                    mIsMouthOutOfBounds = checkLipLocation(x, y);
                 }
             }
         }
-        mPoints.setPoints(mMouthPoints);
-        mPoints.drawLipPoints();
-        mPoints.drawLipLine();
-        if (mouthOutOfBounds) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getBinding().tvMessage.setText(R.string.mouth_out_of_bounds);
-                }
-            });
-        } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getBinding().tvMessage.setText("");
-                }
-            });
+        if (getViewModel() != null) {
+            getViewModel().drawLip(canvas, mMatrix, mMouthPoints);
         }
-    }
-
-    private float view2openglX(int x) {
-        float centerX = CameraOverlap.PREVIEW_HEIGHT / 2.0f;
-        float t = x - centerX;
-        return t / centerX;
-    }
-
-    private float view2openglY(int y) {
-        float centerY = CameraOverlap.PREVIEW_WIDTH / 2.0f;
-        float s = centerY - y;
-        return s / centerY;
     }
 
     private boolean checkLipLocation(int x, int y) {

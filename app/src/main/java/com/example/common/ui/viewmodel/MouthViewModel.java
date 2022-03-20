@@ -1,6 +1,11 @@
 package com.example.common.ui.viewmodel;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -20,6 +25,15 @@ import java.util.stream.Collectors;
 
 public class MouthViewModel extends BaseViewModel {
 
+    private static final String FULL_MAX_HORIZONTAL_MOUTH = "FullMaxHMouth.jpg";
+    private static final String MAX_HORIZONTAL_MOUTH = "MaxHMouth.jpg";
+    private static final String FULL_MAX_VERTICAL_MOUTH = "FullMaxVMouth.jpg";
+    private static final String MAX_VERTICAL_MOUTH = "MaxVMouth.jpg";
+
+    private static final int STROKE_WIDTH = 3;
+    private static final int RADIUS = 4;
+
+    private final MutableLiveData<String> mMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsShowLoading = new MutableLiveData<>();
 
     @Override
@@ -30,6 +44,10 @@ public class MouthViewModel extends BaseViewModel {
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
 
+    }
+
+    public MutableLiveData<String> getMessage() {
+        return mMessage;
     }
 
     public MutableLiveData<Boolean> isShowLoading() {
@@ -55,7 +73,11 @@ public class MouthViewModel extends BaseViewModel {
                     }).collect(Collectors.toList());
                     Mouth maxHMouth = sortedMaxHMouths.get(0);
                     Bitmap maxHBitmap = CameraUtils.getSceneBtm(maxHMouth.getData(), maxHMouth.getWidth(), maxHMouth.getHeight());
-                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), "MaxHMouth.jpg", maxHBitmap, 100);
+                    Bitmap rotatedMaxHBitmap = BitmapUtils.rotateBitmap(maxHBitmap, 270, true, false);
+                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), FULL_MAX_HORIZONTAL_MOUTH, rotatedMaxHBitmap, 100);
+                    Bitmap drawnMaxHBitmap = drawMouth(rotatedMaxHBitmap, maxHMouth.getPoints());
+                    Bitmap croppedMaxHBitmap = cropMouth(drawnMaxHBitmap);
+                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), MAX_HORIZONTAL_MOUTH, croppedMaxHBitmap, 100);
                     // Max Vertical Distance Mouths
                     List<Mouth> sortedMaxVMouths = mouths.stream().sorted(new Comparator<Mouth>() {
                         @Override
@@ -65,10 +87,118 @@ public class MouthViewModel extends BaseViewModel {
                     }).collect(Collectors.toList());
                     Mouth maxVMouth = sortedMaxVMouths.get(0);
                     Bitmap maxVBitmap = CameraUtils.getSceneBtm(maxVMouth.getData(), maxVMouth.getWidth(), maxVMouth.getHeight());
-                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), "MaxVMouth.jpg", maxVBitmap, 100);
+                    Bitmap rotatedMaxVBitmap = BitmapUtils.rotateBitmap(maxVBitmap, 270, true, false);
+                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), FULL_MAX_VERTICAL_MOUTH, rotatedMaxVBitmap, 100);
+                    Bitmap drawnMaxVBitmap = drawMouth(rotatedMaxVBitmap, maxVMouth.getPoints());
+                    Bitmap croppedMaxVBitmap = cropMouth(drawnMaxVBitmap);
+                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), MAX_VERTICAL_MOUTH, croppedMaxVBitmap, 100);
                 }
                 mIsShowLoading.postValue(false);
             }
         });
+    }
+
+    private Bitmap drawMouth(Bitmap sourceBitmap, float[] points) {
+        Bitmap copiedBitmap = sourceBitmap.copy(sourceBitmap.getConfig(), true);
+        int width = copiedBitmap.getWidth();
+        int height = copiedBitmap.getHeight();
+        Canvas canvas = new Canvas(copiedBitmap);
+        Matrix matrix = new Matrix();
+
+        // 正方形框
+        int left = width / 3;
+        int top = height / 8 * 5;
+        int right = width / 3 * 2;
+        int bottom = height / 8 * 5 + (right - left);
+        drawRectangle(canvas, matrix, left, top, right, bottom);
+        drawLip(canvas, matrix, points);
+        return copiedBitmap;
+    }
+
+    private Bitmap cropMouth(Bitmap sourceBitmap) {
+        int width = sourceBitmap.getWidth();
+        int height = sourceBitmap.getHeight();
+        // 正方形框
+        int left = width / 3;
+        int top = height / 8 * 5;
+        int right = width / 3 * 2;
+        int bottom = height / 8 * 5 + (right - left);
+        Rect rectangle = new Rect(left, top, right, bottom);
+        return BitmapUtils.getCropBitmap(sourceBitmap, rectangle, 1);
+    }
+
+    public void drawBorder(Canvas canvas, Matrix matrix, int left, int top, int right, int bottom) {
+        // Border
+        Paint borderPaint = new Paint();
+        borderPaint.setColor(Color.GREEN);
+        borderPaint.setStrokeWidth(STROKE_WIDTH);
+        borderPaint.setStyle(Paint.Style.STROKE);
+
+        if (canvas == null) {
+            return;
+        }
+        canvas.save();
+        canvas.setMatrix(matrix);
+        // 正方形框
+        Rect rectangle = new Rect(left, top, right, bottom);
+        canvas.drawRect(rectangle, borderPaint);
+        canvas.restore();
+    }
+
+    public void drawRectangle(Canvas canvas, Matrix matrix, int left, int top, int right, int bottom) {
+        // Rectangle
+        Paint rectPaint = new Paint();
+        rectPaint.setColor(Color.BLACK);
+        rectPaint.setStyle(Paint.Style.FILL);
+
+        if (canvas == null) {
+            return;
+        }
+        canvas.save();
+        canvas.setMatrix(matrix);
+        // 正方形框
+        Rect rectangle = new Rect(left, top, right, bottom);
+        canvas.drawRect(rectangle, rectPaint);
+        canvas.restore();
+    }
+
+    public void drawPoint(Canvas canvas, Matrix matrix, float x, float y) {
+        // Point
+        Paint pointPaint = new Paint();
+        pointPaint.setColor(Color.RED);
+        pointPaint.setStyle(Paint.Style.FILL);
+
+        if (canvas == null) {
+            return;
+        }
+        canvas.save();
+        canvas.setMatrix(matrix);
+        canvas.drawCircle(x, y, RADIUS, pointPaint);
+        canvas.restore();
+    }
+
+    public void drawLine(Canvas canvas, Matrix matrix, float startX, float startY, float stopX, float stopY) {
+        // Line
+        Paint linePaint = new Paint();
+        linePaint.setColor(Color.RED);
+        linePaint.setStrokeWidth(2);
+        linePaint.setStyle(Paint.Style.STROKE);
+
+        if (canvas == null) {
+            return;
+        }
+        canvas.save();
+        canvas.setMatrix(matrix);
+        canvas.drawLine(startX, startY, stopX, stopY, linePaint);
+        canvas.restore();
+    }
+
+    public void drawLip(Canvas canvas, Matrix matrix, float[] points) {
+        for (int i = 0; i < points.length - 1; i = i + 2) {
+            drawPoint(canvas, matrix, points[i], points[i + 1]);
+            if (i < points.length - 3) {
+                drawLine(canvas, matrix, points[i], points[i + 1], points[i + 2], points[i + 3]);
+            }
+        }
     }
 }

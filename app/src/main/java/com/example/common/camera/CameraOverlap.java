@@ -9,8 +9,8 @@ import java.util.List;
 
 public class CameraOverlap {
 
-    public static final int PREVIEW_WIDTH = 640;
-    public static final int PREVIEW_HEIGHT = 480;
+    public static final int PREVIEW_WIDTH = 960;
+    public static final int PREVIEW_HEIGHT = 720;
     public static final int SCALE_FACTOR = 1;
 
     private final int CameraFacing = Camera.CameraInfo.CAMERA_FACING_FRONT;
