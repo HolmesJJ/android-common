@@ -106,6 +106,14 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     }
 
     @Override
+    public void onBackPressed() {
+        showLoading(false);
+        releaseCamera();
+        stopLoading();
+        super.onBackPressed();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mIsRGBCameraNv21Ready = false;

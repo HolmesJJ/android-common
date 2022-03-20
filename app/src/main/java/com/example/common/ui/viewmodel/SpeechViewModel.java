@@ -14,6 +14,7 @@ import com.example.common.utils.ToastUtils;
 
 public class SpeechViewModel extends BaseViewModel {
 
+    private final MutableLiveData<String> mFrameName = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsShowLoading = new MutableLiveData<>();
 
     @Override
@@ -24,6 +25,10 @@ public class SpeechViewModel extends BaseViewModel {
     @Override
     public void onDestroy(@NonNull LifecycleOwner owner) {
 
+    }
+
+    public MutableLiveData<String> getFrameName() {
+        return mFrameName;
     }
 
     public MutableLiveData<Boolean> isShowLoading() {

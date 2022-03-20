@@ -1,11 +1,16 @@
 package com.example.common.ui.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.widget.MediaController;
 
 import androidx.annotation.NonNull;
 
@@ -21,9 +26,12 @@ import com.example.common.landmark.GLFramebuffer;
 import com.example.common.thread.CustomThreadPool;
 import com.example.common.ui.viewmodel.SpeechViewModel;
 import com.example.common.utils.ContextUtils;
+import com.example.common.utils.FileUtils;
+
+import java.io.File;
 
 public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechViewModel>
-        implements SurfaceHolder.Callback, Camera.PreviewCallback{
+        implements SurfaceHolder.Callback, Camera.PreviewCallback {
 
     private static final String TAG = SpeechActivity.class.getSimpleName();
 
@@ -38,6 +46,9 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     private GLFramebuffer mFramebuffer;
     private GLFrame mFrame;
     private GLBitmap mBitmap;
+
+    private File mFramesFolder;
+    private int mCountFrame = 0;
 
     private byte[] mRGBCameraTrackNv21;
     private boolean mIsRGBCameraNv21Ready = false;
@@ -67,13 +78,25 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
             mEnglishId = bundle.getInt("englishId");
         }
         getBinding().svOverlap.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        mFramesFolder = new File(FileUtils.FRAMES_DIR + mEnglishId);
         initCamera();
+        initPlayer();
+        playVideo("exercise");
     }
 
     @Override
     public void initViewObservable() {
         super.initViewObservable();
+        setObserveListener();
         doIsShowLoading();
+    }
+
+    @Override
+    public void onBackPressed() {
+        showLoading(false);
+        releaseCamera();
+        stopLoading();
+        super.onBackPressed();
     }
 
     @Override
@@ -145,6 +168,16 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         }
     }
 
+    private void setObserveListener() {
+        if (getViewModel() == null) {
+            return;
+        }
+        getViewModel().getFrameName().observe(this, frameName -> {
+            Bitmap frameBitmap = BitmapFactory.decodeFile(FileUtils.FRAMES_DIR + mEnglishId + "/capture_" + frameName);
+            getBinding().ivMouthFrame.setImageBitmap(frameBitmap);
+        });
+    }
+
     private void initCamera() {
         mFramebuffer = new GLFramebuffer();
         mFrame = new GLFrame();
@@ -166,6 +199,9 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
             int tid = 0;
             mFrame.drawFrame(tid, mFramebuffer.drawFrameBuffer(), mFramebuffer.getMatrix());
             mEglUtils.swap();
+            if (getViewModel() != null) {
+                getViewModel().getFrameName().postValue(getFrameName());
+            }
             mIsRGBCameraNv21Ready = false;
         });
     }
@@ -192,6 +228,51 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
             mEglUtils.release();
             mEglUtils = null;
         }
+    }
+
+    private String getFrameName() {
+        String[] children = mFramesFolder.list();
+        if (children == null) {
+            return "";
+        }
+        // 减缓速度
+        int countFrame = mCountFrame / 2 + 1;
+        // Excluding the zip file
+        int size = children.length - 1;
+        final String frameName;
+        if (countFrame >= 1 && countFrame < 10) {
+            frameName = "0" + countFrame;
+        } else if (countFrame >= 10 && countFrame <= size) {
+            frameName = String.valueOf(countFrame);
+        } else if (countFrame > size && countFrame <= size + 30) {
+            frameName = String.valueOf(size);
+        } else {
+            mCountFrame = 0;
+            frameName = "01";
+        }
+        mCountFrame++;
+        System.out.println("frameName" + frameName);
+        return frameName + ".png";
+    }
+
+    private void initPlayer() {
+        MediaController mediaController = new MediaController(SpeechActivity.this);
+        mediaController.setAnchorView(getBinding().vvPlayer);
+        mediaController.setMediaPlayer(getBinding().vvPlayer);
+        getBinding().vvPlayer.setMediaController(mediaController);
+        getBinding().vvPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mPlayer) {
+                mPlayer.start();
+                mPlayer.setLooping(true);
+            }
+        });
+    }
+
+    private void playVideo(String videoType) {
+        String path = FileUtils.VIDEO_DIR + mEnglishId + File.separator + videoType + ".mp4";
+        getBinding().vvPlayer.setVideoURI(Uri.parse(path));
+        getBinding().vvPlayer.start();
     }
 
     /**

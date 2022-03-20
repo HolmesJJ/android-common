@@ -1,6 +1,7 @@
 package com.example.common.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -41,13 +42,13 @@ public class TutorialActivity extends BaseActivity<ActivityTutorialBinding, Tuto
     @Override
     public void initData() {
         super.initData();
-        initPlayer();
         if (getIntent() != null && getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             mEnglishId = bundle.getInt("englishId");
-            playVideo("tutorial");
-            getBinding().btnSwitch.setText("Play Organ");
         }
+        initPlayer();
+        playVideo("tutorial");
+        getBinding().btnSwitch.setText("Play Organ");
     }
 
     @Override
@@ -104,6 +105,13 @@ public class TutorialActivity extends BaseActivity<ActivityTutorialBinding, Tuto
         mediaController.setAnchorView(getBinding().vvPlayer);
         mediaController.setMediaPlayer(getBinding().vvPlayer);
         getBinding().vvPlayer.setMediaController(mediaController);
+        getBinding().vvPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mPlayer) {
+                mPlayer.start();
+                mPlayer.setLooping(true);
+            }
+        });
     }
 
     private void playVideo(String videoType) {
