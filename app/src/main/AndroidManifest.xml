@@ -57,6 +57,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.activity.TutorialActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.SpeechActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".ui.activity.MouthActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".MainActivity"

@@ -80,7 +80,10 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
         ListenerUtils.setOnClickListener(getBinding().svPronunciation, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-
+                Intent intent = new Intent(ContextUtils.getContext(), SpeechActivity.class);
+                intent.putExtra("englishId", mEnglishId);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         ListenerUtils.setOnClickListener(getBinding().svMouth, new OnMultiClickListener() {
