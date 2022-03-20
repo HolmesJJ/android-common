@@ -27,6 +27,7 @@ import com.example.common.landmark.GLFramebuffer;
 import com.example.common.model.mouth.Mouth;
 import com.example.common.thread.CustomThreadPool;
 import com.example.common.ui.viewmodel.MouthViewModel;
+import com.example.common.utils.ContextUtils;
 import com.example.common.utils.FileUtils;
 import com.example.common.utils.ListenerUtils;
 import com.zeusee.main.hyperlandmark.jni.Face;
@@ -124,7 +125,7 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         Log.i(TAG, "surfaceCreated");
         THREAD_POOL_CAMERA.execute(() -> {
-            mCameraOverlap = new CameraOverlap(MouthActivity.this);
+            mCameraOverlap = new CameraOverlap(ContextUtils.getContext());
             mCameraOverlap.setPreviewCallback(this);
         });
     }
@@ -245,7 +246,7 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     private void initCamera() {
         mFramebuffer = new GLFramebuffer();
         mFrame = new GLFrame();
-        mBitmap = new GLBitmap(MouthActivity.this, R.drawable.ic_avatar); // 任意定义一张图
+        mBitmap = new GLBitmap(ContextUtils.getContext(), R.drawable.ic_avatar); // 任意定义一张图
         mMatrix = new Matrix();
         getBinding().svCamera.getHolder().addCallback(this);
     }
