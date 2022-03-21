@@ -132,7 +132,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
     /**
      * 控制进度圈显示
      */
-    public void doIsShowLoading() {
+    private void doIsShowLoading() {
         if (getViewModel() == null) {
             return;
         }

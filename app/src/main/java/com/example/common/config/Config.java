@@ -17,6 +17,7 @@ public final class Config {
     private static String sUsername;
     private static String sToken;
     private static String sRefreshToken;
+    private static String sSpeechData;
 
     private Config() {
     }
@@ -26,7 +27,7 @@ public final class Config {
     }
 
     public static void setPublicKey(String publicKey) {
-        SP.put(SpUtilKeyConstants.PUBLIC_KEY, sPublicKey);
+        SP.put(SpUtilKeyConstants.PUBLIC_KEY, publicKey);
         sPublicKey = publicKey;
     }
 
@@ -35,7 +36,7 @@ public final class Config {
     }
 
     public static void setDeviceUUID(String deviceUUID) {
-        SP.put(SpUtilKeyConstants.DEVICE_UUID, sDeviceUUID);
+        SP.put(SpUtilKeyConstants.DEVICE_UUID, deviceUUID);
         sDeviceUUID = deviceUUID;
     }
 
@@ -84,6 +85,15 @@ public final class Config {
         sRefreshToken = refreshToken;
     }
 
+    public static String getSpeechData() {
+        return sSpeechData;
+    }
+
+    public static void setSpeechData(String speechData) {
+        SP.put(SpUtilKeyConstants.SPEECH_DATA, speechData);
+        sSpeechData = speechData;
+    }
+
     public static void resetConfig() {
         SpUtils.getInstance(SETTING_CONFIG).clear();
         loadConfig();
@@ -97,6 +107,7 @@ public final class Config {
         sUsername = SP.getString(SpUtilKeyConstants.USERNAME, "");
         sToken = SP.getString(SpUtilKeyConstants.TOKEN, "");
         sRefreshToken = SP.getString(SpUtilKeyConstants.REFRESH_TOKEN, "");
+        sSpeechData = SP.getString(SpUtilKeyConstants.SPEECH_DATA, "");
     }
 
     static {

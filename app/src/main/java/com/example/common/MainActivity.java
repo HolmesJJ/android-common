@@ -268,7 +268,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
     /**
      * 控制进度圈显示
      */
-    public void doIsShowLoading() {
+    private void doIsShowLoading() {
         if (getViewModel() == null) {
             return;
         }

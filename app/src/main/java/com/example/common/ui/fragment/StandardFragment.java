@@ -15,9 +15,16 @@ import com.example.common.ui.viewmodel.StandardViewModel;
 public class StandardFragment extends BaseFragment<FragmentStandardBinding, StandardViewModel> {
 
     private static final String TAG = StandardFragment.class.getSimpleName();
+    private static final String ENGLISH_ID = "englishId";
 
-    public static StandardFragment newInstance() {
-        return new StandardFragment();
+    private int mEnglishId;
+
+    public static StandardFragment newInstance(int englishId) {
+        Bundle args = new Bundle();
+        StandardFragment fragment = new StandardFragment();
+        args.putInt(ENGLISH_ID, englishId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -36,13 +43,12 @@ public class StandardFragment extends BaseFragment<FragmentStandardBinding, Stan
     }
 
     @Override
-    public void initParam() {
-        super.initParam();
-    }
-
-    @Override
     public void initData() {
         super.initData();
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            mEnglishId = bundle.getInt(ENGLISH_ID);
+        }
     }
 
     @Override

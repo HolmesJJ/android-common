@@ -39,11 +39,6 @@ public class CoverFragment extends BaseFragment<FragmentCoverBinding, CoverViewM
     }
 
     @Override
-    public void initParam() {
-        super.initParam();
-    }
-
-    @Override
     public void initData() {
         super.initData();
     }

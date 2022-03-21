@@ -100,7 +100,7 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
     /**
      * 控制进度圈显示
      */
-    public void doIsShowLoading() {
+    private void doIsShowLoading() {
         if (getViewModel() == null) {
             return;
         }

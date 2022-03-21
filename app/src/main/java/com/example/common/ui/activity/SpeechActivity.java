@@ -274,7 +274,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     };
 
     private void initChart() {
-        getBinding().cvpChart.setAdapter(new ChartAdapter(getSupportFragmentManager()));
+        getBinding().cvpChart.setAdapter(new ChartAdapter(getSupportFragmentManager(), mEnglishId));
         getBinding().cvpChart.setCurrentItem(0);
     }
 
@@ -351,7 +351,6 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
             frameName = "01";
         }
         mCountFrame++;
-        System.out.println("frameName" + frameName);
         return frameName + ".png";
     }
 
@@ -442,7 +441,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     /**
      * 控制进度圈显示
      */
-    public void doIsShowLoading() {
+    private void doIsShowLoading() {
         if (getViewModel() == null) {
             return;
         }

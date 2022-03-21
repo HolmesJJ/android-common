@@ -15,9 +15,16 @@ import com.example.common.ui.viewmodel.ResultViewModel;
 public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultViewModel> {
 
     private static final String TAG = ResultFragment.class.getSimpleName();
+    private static final String ENGLISH_ID = "englishId";
 
-    public static ResultFragment newInstance() {
-        return new ResultFragment();
+    private int mEnglishId;
+
+    public static ResultFragment newInstance(int englishId) {
+        Bundle args = new Bundle();
+        ResultFragment fragment = new ResultFragment();
+        args.putInt(ENGLISH_ID, englishId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -36,13 +43,12 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
     }
 
     @Override
-    public void initParam() {
-        super.initParam();
-    }
-
-    @Override
     public void initData() {
         super.initData();
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            mEnglishId = bundle.getInt(ENGLISH_ID);
+        }
     }
 
     @Override

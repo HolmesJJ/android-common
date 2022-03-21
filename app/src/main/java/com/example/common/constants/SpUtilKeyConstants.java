@@ -9,6 +9,7 @@ public class SpUtilKeyConstants {
     public static final String USERNAME = "username";
     public static final String TOKEN = "token";
     public static final String REFRESH_TOKEN = "refresh_token";
+    public static final String SPEECH_DATA = "speech_data";
 
     public SpUtilKeyConstants() {
     }

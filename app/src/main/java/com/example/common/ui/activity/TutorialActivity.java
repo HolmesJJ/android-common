@@ -123,7 +123,7 @@ public class TutorialActivity extends BaseActivity<ActivityTutorialBinding, Tuto
     /**
      * 控制进度圈显示
      */
-    public void doIsShowLoading() {
+    private void doIsShowLoading() {
         if (getViewModel() == null) {
             return;
         }
