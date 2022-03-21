@@ -48,8 +48,11 @@ ext {
             // glide
             "glide"                      : "com.github.bumptech.glide:glide:4.12.0",
 
-            // rxandroidaudio
-            "rxandroidaudio"             : "com.github.piasy:rxandroidaudio:1.7.0",
-            "AudioProcessor"             : "com.github.piasy:AudioProcessor:1.7.0",
+            // audio recorder
+            "rx-android-audio"             : "com.github.piasy:rxandroidaudio:1.7.0",
+            "audio-processor"             : "com.github.piasy:AudioProcessor:1.7.0",
+
+            // chart
+            "android-chart"               : "com.github.PhilJay:MPAndroidChart:v3.1.0",
     ]
 }

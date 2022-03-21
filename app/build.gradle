@@ -95,9 +95,11 @@ dependencies {
     implementation rootProject.ext.dependencies["fastjson"]
     // glide
     implementation rootProject.ext.dependencies["glide"]
-    // rxandroidaudio
-    implementation rootProject.ext.dependencies["rxandroidaudio"]
-    implementation rootProject.ext.dependencies["AudioProcessor"]
+    // audio recorder
+    implementation rootProject.ext.dependencies["rx-android-audio"]
+    implementation rootProject.ext.dependencies["audio-processor"]
+    // chart
+    implementation rootProject.ext.dependencies["android-chart"]
     testImplementation rootProject.ext.dependencies["junit"]
     androidTestImplementation rootProject.ext.dependencies["test-ext"]
     androidTestImplementation rootProject.ext.dependencies["espresso-core"]
