@@ -54,5 +54,8 @@ ext {
 
             // chart
             "android-chart"               : "com.github.PhilJay:MPAndroidChart:v3.1.0",
+
+            // okhttp
+            "okhttp"                      : "com.squareup.okhttp3:okhttp:4.9.3",
     ]
 }

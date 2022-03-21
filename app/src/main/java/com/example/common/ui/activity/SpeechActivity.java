@@ -24,6 +24,7 @@ import com.example.common.R;
 import com.example.common.adapter.speech.ChartAdapter;
 import com.example.common.base.BaseActivity;
 import com.example.common.camera.CameraOverlap;
+import com.example.common.config.Config;
 import com.example.common.databinding.ActivitySpeechBinding;
 import com.example.common.landmark.EGLUtils;
 import com.example.common.landmark.GLBitmap;
@@ -37,6 +38,8 @@ import com.example.common.utils.ListenerUtils;
 import com.github.piasy.rxandroidaudio.AudioRecorder;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechViewModel>
         implements SurfaceHolder.Callback, Camera.PreviewCallback {
@@ -61,6 +64,8 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     private Handler mHandler;
 
     private File mFramesFolder;
+    private File mRecordFolder;
+    private File mAudioFile;
     private int mCountFrame = 0;
 
     private byte[] mRGBCameraTrackNv21;
@@ -123,10 +128,14 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     public void onResume() {
         super.onResume();
         mIsRGBCameraNv21Ready = false;
+        if (!getBinding().vvPlayer.isPlaying()) {
+            getBinding().vvPlayer.start();
+        }
     }
 
     @Override
     protected void onDestroy() {
+        listeners.clear();
         releaseCamera();
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
@@ -196,6 +205,12 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         if (getViewModel() == null) {
             return;
         }
+        getViewModel().getSpeechData().observe(this, speechData -> {
+            Log.i(TAG, "SpeechData: " + speechData);
+            Config.setSpeechData(speechData);
+            sendSpeechData(speechData);
+            getBinding().cvpChart.setCurrentItem(1);
+        });
         getViewModel().getFrameName().observe(this, frameName -> {
             Bitmap frameBitmap = BitmapFactory.decodeFile(FileUtils.FRAMES_DIR + mEnglishId + "/capture_" + frameName);
             getBinding().ivMouthFrame.setImageBitmap(frameBitmap);
@@ -224,6 +239,9 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
                         if (mIsRecording) {
                             THREAD_POOL_RECORD.execute(() -> {
                                 stopRecord();
+                                if (getViewModel() != null) {
+                                    getViewModel().uploadAudio(mAudioFile, mEnglishId);
+                                }
                             });
                             mHandler.removeCallbacks(mProgressRunnable);
                             getBinding().lpvRecord.setProgress(0);
@@ -261,6 +279,9 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
                 if (mIsRecording) {
                     THREAD_POOL_RECORD.execute(() -> {
                         stopRecord();
+                        if (getViewModel() != null) {
+                            getViewModel().uploadAudio(mAudioFile, mEnglishId);
+                        }
                     });
                     mHandler.removeCallbacks(mProgressRunnable);
                     getBinding().lpvRecord.setProgress(0);
@@ -359,6 +380,8 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         mediaController.setAnchorView(getBinding().vvPlayer);
         mediaController.setMediaPlayer(getBinding().vvPlayer);
         getBinding().vvPlayer.setMediaController(mediaController);
+        getBinding().vvPlayer.setZOrderOnTop(true);
+        getBinding().vvPlayer.setZOrderMediaOverlay(true);
         getBinding().vvPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mPlayer) {
@@ -375,12 +398,12 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     }
 
     private void startRecord() {
-        File recordFolder = new File(FileUtils.AUDIO_DIR, String.valueOf(mEnglishId));
-        if (!recordFolder.exists()) {
-            recordFolder.mkdirs();
+        mRecordFolder = new File(FileUtils.AUDIO_DIR, String.valueOf(mEnglishId));
+        if (!mRecordFolder.exists()) {
+            mRecordFolder.mkdirs();
         }
         mAudioRecorder = AudioRecorder.getInstance();
-        File mAudioFile = new File(recordFolder.getAbsolutePath() + "/record.mp3");
+        mAudioFile = new File(mRecordFolder.getAbsolutePath() + "/record.mp3");
         mAudioRecorder.prepareRecord(
                 MediaRecorder.AudioSource.MIC,
                 MediaRecorder.OutputFormat.MPEG_4,
@@ -452,5 +475,21 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
                 stopLoading();
             }
         });
+    }
+
+    private final List<ISpeechDataUpdated> listeners = new ArrayList<>();
+
+    public interface ISpeechDataUpdated {
+        void onSpeechDataUpdated(String speechData);
+    }
+
+    public void setSpeechDataUpdated(ISpeechDataUpdated listener) {
+        this.listeners.add(listener);
+    }
+
+    public void sendSpeechData(String speechData) {
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onSpeechDataUpdated(speechData);
+        }
     }
 }

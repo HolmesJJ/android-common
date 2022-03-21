@@ -10,9 +10,11 @@ import com.example.common.BR;
 import com.example.common.R;
 import com.example.common.base.BaseFragment;
 import com.example.common.databinding.FragmentStandardBinding;
+import com.example.common.ui.activity.SpeechActivity;
 import com.example.common.ui.viewmodel.StandardViewModel;
 
-public class StandardFragment extends BaseFragment<FragmentStandardBinding, StandardViewModel> {
+public class StandardFragment extends BaseFragment<FragmentStandardBinding, StandardViewModel>
+        implements SpeechActivity.ISpeechDataUpdated {
 
     private static final String TAG = StandardFragment.class.getSimpleName();
     private static final String ENGLISH_ID = "englishId";
@@ -49,15 +51,41 @@ public class StandardFragment extends BaseFragment<FragmentStandardBinding, Stan
         if (bundle != null) {
             mEnglishId = bundle.getInt(ENGLISH_ID);
         }
+        if (getActivity() instanceof SpeechActivity) {
+            SpeechActivity activity = (SpeechActivity) getActivity();
+            activity.setSpeechDataUpdated(this);
+        }
+        initSpeechData();
     }
 
     @Override
     public void initViewObservable() {
         super.initViewObservable();
+        setObserveListener();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onSpeechDataUpdated(String speechData) {
+        if (getViewModel() != null) {
+            getViewModel().getSpeechData().postValue(speechData);
+        }
+    }
+
+    private void setObserveListener() {
+        if (getViewModel() == null) {
+            return;
+        }
+        getViewModel().getSpeechData().observe(this, speechData -> {
+            initSpeechData();
+        });
+    }
+
+    private void initSpeechData() {
+
     }
 }
