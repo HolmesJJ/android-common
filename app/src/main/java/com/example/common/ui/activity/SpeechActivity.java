@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import androidx.annotation.NonNull;
 
 import com.example.common.BR;
 import com.example.common.R;
+import com.example.common.adapter.speech.ChartAdapter;
 import com.example.common.base.BaseActivity;
 import com.example.common.camera.CameraOverlap;
 import com.example.common.databinding.ActivitySpeechBinding;
@@ -32,6 +34,7 @@ import com.example.common.ui.viewmodel.SpeechViewModel;
 import com.example.common.utils.ContextUtils;
 import com.example.common.utils.FileUtils;
 import com.example.common.utils.ListenerUtils;
+import com.github.piasy.rxandroidaudio.AudioRecorder;
 
 import java.io.File;
 
@@ -41,6 +44,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     private static final String TAG = SpeechActivity.class.getSimpleName();
 
     private static final CustomThreadPool THREAD_POOL_CAMERA = new CustomThreadPool(Thread.NORM_PRIORITY);
+    private static final CustomThreadPool THREAD_POOL_RECORD = new CustomThreadPool(Thread.NORM_PRIORITY);
 
     private final Object lockObj = new Object();
 
@@ -51,6 +55,8 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     private GLFramebuffer mFramebuffer;
     private GLFrame mFrame;
     private GLBitmap mBitmap;
+
+    private AudioRecorder mAudioRecorder;
 
     private Handler mHandler;
 
@@ -89,6 +95,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         if (mHandler == null) {
             mHandler = new Handler();
         }
+        initChart();
         getBinding().svOverlap.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         mFramesFolder = new File(FileUtils.FRAMES_DIR + mEnglishId);
         initCamera();
@@ -203,13 +210,26 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mIsRecording = true;
+                        if (getBinding().vvPlayer.isPlaying()) {
+                            getBinding().vvPlayer.pause();
+                        }
                         mHandler.postDelayed(mProgressRunnable, 50);
+                        getBinding().rlVolumeContainer.setVisibility(View.VISIBLE);
+                        mHandler.post(mVolumeRunnable);
+                        THREAD_POOL_RECORD.execute(() -> {
+                            startRecord();
+                        });
                         break;
                     case MotionEvent.ACTION_UP:
                         if (mIsRecording) {
+                            THREAD_POOL_RECORD.execute(() -> {
+                                stopRecord();
+                            });
                             mHandler.removeCallbacks(mProgressRunnable);
                             getBinding().lpvRecord.setProgress(0);
                             mCurProgress = 0;
+                            mHandler.removeCallbacks(mVolumeRunnable);
+                            getBinding().rlVolumeContainer.setVisibility(View.GONE);
                             mIsRecording = false;
                         }
                         break;
@@ -221,6 +241,14 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         });
     }
 
+    private final Runnable mVolumeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateVolume(getVolume());
+            mHandler.postDelayed(mVolumeRunnable, 50);
+        }
+    };
+
     private final Runnable mProgressRunnable = new Runnable() {
         @Override
         public void run() {
@@ -231,14 +259,24 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
                 mHandler.postDelayed(mProgressRunnable, 50);
             } else {
                 if (mIsRecording) {
+                    THREAD_POOL_RECORD.execute(() -> {
+                        stopRecord();
+                    });
                     mHandler.removeCallbacks(mProgressRunnable);
                     getBinding().lpvRecord.setProgress(0);
                     mCurProgress = 0;
+                    mHandler.removeCallbacks(mVolumeRunnable);
+                    getBinding().rlVolumeContainer.setVisibility(View.GONE);
                     mIsRecording = false;
                 }
             }
         }
     };
+
+    private void initChart() {
+        getBinding().cvpChart.setAdapter(new ChartAdapter(getSupportFragmentManager()));
+        getBinding().cvpChart.setCurrentItem(0);
+    }
 
     private void initCamera() {
         mFramebuffer = new GLFramebuffer();
@@ -335,6 +373,70 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         String path = FileUtils.VIDEO_DIR + mEnglishId + File.separator + videoType + ".mp4";
         getBinding().vvPlayer.setVideoURI(Uri.parse(path));
         getBinding().vvPlayer.start();
+    }
+
+    private void startRecord() {
+        File recordFolder = new File(FileUtils.AUDIO_DIR, String.valueOf(mEnglishId));
+        if (!recordFolder.exists()) {
+            recordFolder.mkdirs();
+        }
+        mAudioRecorder = AudioRecorder.getInstance();
+        File mAudioFile = new File(recordFolder.getAbsolutePath() + "/record.mp3");
+        mAudioRecorder.prepareRecord(
+                MediaRecorder.AudioSource.MIC,
+                MediaRecorder.OutputFormat.MPEG_4,
+                MediaRecorder.AudioEncoder.AAC,
+                mAudioFile);
+        mAudioRecorder.startRecord();
+    }
+
+    private void stopRecord() {
+        if (mAudioRecorder != null) {
+            mAudioRecorder.stopRecord();
+            mAudioRecorder = null;
+        }
+    }
+
+    // 获取音量值，只是针对录音音量
+    public int getVolume() {
+        int volume = 0;
+        // 录音
+        if (mAudioRecorder != null) {
+            volume = mAudioRecorder.getMaxAmplitude() / 650;
+            if (volume != 0) {
+                volume = (int) (10 * Math.log10(volume)) / 3;
+            }
+        }
+        return volume;
+    }
+
+    // 更新音量图
+    private void updateVolume(int volume) {
+        switch (volume) {
+            case 1:
+                getBinding().ivVolume.setImageResource(R.drawable.volume1);
+                break;
+            case 2:
+                getBinding().ivVolume.setImageResource(R.drawable.volume2);
+                break;
+            case 3:
+                getBinding().ivVolume.setImageResource(R.drawable.volume3);
+                break;
+            case 4:
+                getBinding().ivVolume.setImageResource(R.drawable.volume4);
+                break;
+            case 5:
+                getBinding().ivVolume.setImageResource(R.drawable.volume5);
+                break;
+            case 6:
+                getBinding().ivVolume.setImageResource(R.drawable.volume6);
+                break;
+            case 7:
+                getBinding().ivVolume.setImageResource(R.drawable.volume7);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
