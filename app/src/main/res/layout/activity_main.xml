@@ -48,7 +48,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/check_in_sentence_1"
-                            android:textSize="@dimen/sp_16"/>
+                            android:textSize="@dimen/sp_18"
+                            android:fontFamily="@font/balonku_regular"/>
 
                     </LinearLayout>
 
@@ -62,16 +63,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/check_in_sentence_2"
-                            android:textSize="@dimen/sp_18"
+                            android:textSize="@dimen/sp_20"
                             android:textColor="@color/black"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold"
+                            android:fontFamily="@font/balonku_regular"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/check_in_sentence_3"
                             android:layout_marginStart="@dimen/dp_5"
-                            android:textSize="@dimen/sp_16" />
+                            android:textSize="@dimen/sp_18"
+                            android:fontFamily="@font/balonku_regular"/>
 
                     </LinearLayout>
 
@@ -93,23 +96,30 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/not_check_in_sentence_1"
-                            android:textSize="@dimen/sp_16"/>
+                            android:textSize="@dimen/sp_18"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/balonku_regular"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/not_check_in_sentence_2"
-                            android:textSize="@dimen/sp_18"
+                            android:textSize="@dimen/sp_20"
                             android:layout_marginStart="@dimen/dp_5"
                             android:textColor="@color/black"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold"
+                            android:fontFamily="@font/balonku_regular"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/not_check_in_sentence_3"
                             android:layout_marginStart="@dimen/dp_5"
-                            android:textSize="@dimen/sp_16"/>
+                            android:textSize="@dimen/sp_18"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/balonku_regular"/>
 
                     </LinearLayout>
 
@@ -123,16 +133,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/not_check_in_sentence_4"
-                            android:textSize="@dimen/sp_16" />
+                            android:textSize="@dimen/sp_18"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/balonku_regular"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/not_check_in_sentence_5"
-                            android:textSize="@dimen/sp_18"
+                            android:textSize="@dimen/sp_20"
                             android:layout_marginStart="@dimen/dp_5"
                             android:textColor="@color/black"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold"
+                            android:fontFamily="@font/balonku_regular"/>
 
                     </LinearLayout>
 
@@ -163,10 +177,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/games"
-                android:textSize="@dimen/sp_18"
+                android:textSize="@dimen/sp_20"
                 android:textColor="@color/black"
                 android:layout_weight="1"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:fontFamily="@font/balonku_regular"/>
 
         </LinearLayout>
 
@@ -208,10 +223,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/past_records"
-                android:textSize="@dimen/sp_18"
+                android:textSize="@dimen/sp_20"
                 android:textColor="@color/black"
                 android:layout_weight="1"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:fontFamily="@font/balonku_regular"/>
 
             <ImageView
                 android:id="@+id/iv_left"
@@ -224,9 +240,10 @@
                 android:id="@+id/tv_current_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/sp_18"
+                android:textSize="@dimen/sp_20"
                 android:textColor="@color/black"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="@font/balonku_regular"/>
 
             <ImageView
                 android:id="@+id/iv_right"
@@ -256,10 +273,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/daily_progress"
-                android:textSize="@dimen/sp_18"
+                android:textSize="@dimen/sp_20"
                 android:textColor="@color/black"
                 android:layout_weight="1"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:fontFamily="@font/balonku_regular"/>
 
         </LinearLayout>
 
@@ -287,10 +305,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/daily_tasks"
-                android:textSize="@dimen/sp_18"
+                android:textSize="@dimen/sp_20"
                 android:textColor="@color/black"
                 android:layout_weight="1"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:fontFamily="@font/balonku_regular"/>
 
         </LinearLayout>
 

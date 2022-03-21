@@ -6,10 +6,12 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.common.R;
 
@@ -81,6 +83,8 @@ public class BarChartView extends View {
         mTextPaint.setStyle(Paint.Style.FILL);
         mTextPaint.setColor(ContextCompat.getColor(context, R.color.FF656565));
         mTextPaint.setTextSize(mTextSize);
+        Typeface typeface = ResourcesCompat.getFont(mContext, R.font.balonku_regular);
+        mTextPaint.setTypeface(Typeface.create(typeface, Typeface.BOLD));
 
         Paint.FontMetrics fm = mTextPaint.getFontMetrics();
         mTextHeight = (int) Math.ceil(fm.descent - fm.ascent);

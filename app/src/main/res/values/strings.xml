@@ -25,13 +25,13 @@
     <string name="cube_hub">Cube-Hub</string>
     <string name="past_records">Past Records</string>
     <string name="check_in_sentence_1">You have checked in</string>
-    <string name="check_in_sentence_2">regularly</string>
+    <string name="check_in_sentence_2">REGULARLY</string>
     <string name="check_in_sentence_3">today</string>
     <string name="not_check_in_sentence_1">You have</string>
-    <string name="not_check_in_sentence_2">not</string>
+    <string name="not_check_in_sentence_2">NOT</string>
     <string name="not_check_in_sentence_3">checked in</string>
     <string name="not_check_in_sentence_4">today.</string>
-    <string name="not_check_in_sentence_5">Cheer up!</string>
+    <string name="not_check_in_sentence_5">CHEER UP!</string>
     <string name="daily_progress">Daily Progress</string>
     <string name="daily_tasks">Daily Tasks</string>
 

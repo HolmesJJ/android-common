@@ -50,7 +50,14 @@
                 android:stateListAnimator="@null"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sp_20" />
+                android:textSize="@dimen/sp_20"
+                android:letterSpacing="0.05"
+                android:fontFamily="@font/balonku_regular"
+                android:shadowColor="@color/light_gary"
+                android:textStyle="bold"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1" />
 
         </RelativeLayout>
 
@@ -65,7 +72,8 @@
                 android:id="@+id/tv_detail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="@dimen/sp_18" />
+                android:textSize="@dimen/sp_18"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

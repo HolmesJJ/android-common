@@ -185,10 +185,29 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 }
             }
         });
+        ListenerUtils.setOnClickListener(getBinding().ivLeft, new OnMultiClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onMultiClick(View v) {
+                if (mDateAdapter == null) {
+                    return;
+                }
+                mCurrentTime = DateUtils.lastMonth(mCurrentTime);
+                String monthYear = DateUtils.getMonth(mCurrentTime) + " " + DateUtils.getYear(mCurrentTime);
+                getBinding().tvCurrentMonth.setText(monthYear);
+                List<DateOfMonth> datesOfMonth = DateUtils.getDatesOfMonth(mCurrentTime);
+                mDateAdapter.setData(datesOfMonth);
+                mDateAdapter.notifyDataSetChanged();
+                isRightVisited();
+            }
+        });
         ListenerUtils.setOnClickListener(getBinding().ivRight, new OnMultiClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onMultiClick(View v) {
+                if (mDateAdapter == null) {
+                    return;
+                }
                 mCurrentTime = DateUtils.nextMonth(mCurrentTime);
                 String monthYear = DateUtils.getMonth(mCurrentTime) + " " + DateUtils.getYear(mCurrentTime);
                 getBinding().tvCurrentMonth.setText(monthYear);

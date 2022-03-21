@@ -28,7 +28,10 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp_14" />
+            android:textSize="@dimen/sp_14"
+            android:letterSpacing="0.05"
+            android:fontFamily="@font/balonku_regular"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 
