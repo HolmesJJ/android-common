@@ -224,6 +224,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        getBinding().cvpChart.setCurrentItem(0);
                         mIsRecording = true;
                         if (getBinding().vvPlayer.isPlaying()) {
                             getBinding().vvPlayer.pause();

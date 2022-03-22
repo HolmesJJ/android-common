@@ -2,6 +2,7 @@ package com.example.common.ui.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -21,6 +22,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
@@ -36,6 +38,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
 
     private static final String TAG = ResultFragment.class.getSimpleName();
     private static final String ENGLISH_ID = "englishId";
+    private static final float BASE_LINE = 5.0f;
 
     private final List<Double> mPoints = new ArrayList<>();
     private final List<Integer> mSplits = new ArrayList<>();
@@ -147,8 +150,8 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         getBinding().lcResult.setTouchEnabled(true);
         getBinding().lcResult.setDragDecelerationEnabled(true);
         getBinding().lcResult.setDragDecelerationFrictionCoef(0.9f);
-        Legend l = getBinding().lcResult.getLegend();
-        l.setEnabled(false);
+        Legend legend = getBinding().lcResult.getLegend();
+        legend.setEnabled(false);
 
         // XAxis
         XAxis xAxis = getBinding().lcResult.getXAxis();
@@ -180,10 +183,10 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         final ArrayList<Entry> splits = new ArrayList<>();
 
         for (int i = 0; i < mPoints.size(); i++) {
-            basePoints.add(new Entry(i, 6, ""));
+            basePoints.add(new Entry(i, BASE_LINE, ""));
             points.add(new Entry(i, mPoints.get(i).floatValue(), i + "F"));
-            if (mPoints.get(i) > 6) {
-                if (i > 0 && mPoints.get(i - 1) <= 6) {
+            if (mPoints.get(i) > BASE_LINE) {
+                if (i > 0 && mPoints.get(i - 1) <= BASE_LINE) {
                     colors.set(i - 1, Color.RED);
                 }
                 colors.add(Color.RED);
@@ -235,22 +238,35 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         basePointsDataSet.setDrawValues(false);
 
         LineData data = new LineData(pointsDataSet, splitsDataSet, basePointsDataSet);
+        getBinding().lcResult.setVisibleXRangeMaximum(mPoints.size());
+        getBinding().lcResult.fitScreen();
         getBinding().lcResult.setData(data);
 
         XAxis xAxis = getBinding().lcResult.getXAxis();
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
-            public String getAxisLabel(float value, AxisBase axis) {
-                return String.valueOf(points.get((int) value).getData());
+            public String getFormattedValue(float value) {
+                String xLabel = "";
+                try {
+                    xLabel = String.valueOf(points.get((int) value).getData());
+                } catch (Exception e) {
+                     e.printStackTrace();
+                }
+                return xLabel;
             }
         });
-
         getBinding().lcResult.notifyDataSetChanged();
-        getBinding().lcResult.setVisibleXRangeMaximum(mPoints.size());
+        getBinding().lcResult.invalidate();
     }
 
     private void clearData() {
         mPoints.clear();
         mSplits.clear();
+        if (getBinding().lcResult.getData() != null) {
+            getBinding().lcResult.getData().clearValues();
+        }
+        getBinding().lcResult.notifyDataSetChanged();
+        getBinding().lcResult.clear();
+        getBinding().lcResult.invalidate();
     }
 }
