@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -164,5 +165,12 @@ public final class BitmapUtils {
         YuvImage image = new YuvImage(nv21, ImageFormat.NV21, w, h, null);
         image.compressToJpeg(rect, 70, outputSteam);
         return outputSteam.toByteArray();
+    }
+
+    public static String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
 }
