@@ -2,7 +2,6 @@ package com.example.common.ui.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -15,14 +14,12 @@ import com.example.common.config.Config;
 import com.example.common.databinding.FragmentResultBinding;
 import com.example.common.ui.activity.SpeechActivity;
 import com.example.common.ui.viewmodel.ResultViewModel;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import org.json.JSONArray;
@@ -30,7 +27,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultViewModel>

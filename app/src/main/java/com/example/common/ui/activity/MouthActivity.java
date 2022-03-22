@@ -25,8 +25,10 @@ import com.example.common.landmark.GLBitmap;
 import com.example.common.landmark.GLFrame;
 import com.example.common.landmark.GLFramebuffer;
 import com.example.common.model.mouth.Mouth;
+import com.example.common.model.mouth.Mouths;
 import com.example.common.thread.CustomThreadPool;
 import com.example.common.ui.viewmodel.MouthViewModel;
+import com.example.common.ui.widget.dialog.mouth.ResultDialog;
 import com.example.common.utils.ContextUtils;
 import com.example.common.utils.FileUtils;
 import com.example.common.utils.ListenerUtils;
@@ -65,6 +67,7 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
 
     private int mEnglishId;
     private int mCurProgress;
+    private int mMouthId;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -197,6 +200,7 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         getViewModel().getMessage().observe(this, message -> {
             getBinding().tvMessage.setText(message);
         });
+        getViewModel().getMouths().observe(this, this::showResultDialog);
     }
 
     private void setOnTouchListener() {
@@ -207,6 +211,7 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mouths.clear();
+                        mMouthId = 0;
                         mIsRecording = true;
                         mHandler.postDelayed(mProgressRunnable, 50);
                         break;
@@ -275,10 +280,11 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
             // Start draw frame, rectangle, points, faces, lips
             int tid = 0;
             mFrame.drawFrame(tid, mFramebuffer.drawFrameBuffer(), mFramebuffer.getMatrix());
+            mIsMouthOutOfBounds = false;
             if (faceActions == null || faceActions.size() == 0) {
                 clearCanvas();
+                mIsMouthOutOfBounds = true;
             }
-            mIsMouthOutOfBounds = false;
             draw(faceActions);
             if (mIsMouthOutOfBounds) {
                 if (getViewModel() != null) {
@@ -294,7 +300,8 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
                 System.arraycopy(mRGBCameraTrackNv21, 0, data, 0, mRGBCameraTrackNv21.length);
                 float[] mouthPoints = new float[24 * 2];
                 System.arraycopy(mMouthPoints, 0, mouthPoints, 0, mMouthPoints.length);
-                mouths.add(new Mouth(data, CameraOverlap.PREVIEW_WIDTH, CameraOverlap.PREVIEW_HEIGHT, mouthPoints));
+                mouths.add(new Mouth(mMouthId, data, CameraOverlap.PREVIEW_WIDTH, CameraOverlap.PREVIEW_HEIGHT, mouthPoints));
+                mMouthId++;
             }
             mEglUtils.swap();
             mIsRGBCameraNv21Ready = false;
@@ -551,6 +558,11 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         int right = CameraOverlap.PREVIEW_HEIGHT / 3 * 2;
         int bottom = CameraOverlap.PREVIEW_WIDTH / 8 * 5 + (right - left);
         return x < left || x > right || y < top || y > bottom;
+    }
+
+    private void showResultDialog(Mouths mouths) {
+        ResultDialog resultDialog = new ResultDialog(MouthActivity.this, mouths);
+        resultDialog.show();
     }
 
     /**

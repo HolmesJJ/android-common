@@ -78,8 +78,10 @@ public abstract class BaseConnection {
         }
         if (Request.RequestMethod.GET.value().equals(request.getMethod())) {
             return doGetRequest();
-        } else if (Request.RequestMethod.POST.value().equals(request.getMethod())) {
+        } else if (Request.RequestMethod.FORM_POST.value().equals(request.getMethod())) {
             return doPostRequest((HashMap<String, String>) request.getBody());
+        } else if (Request.RequestMethod.JSON_POST.value().equals(request.getMethod())) {
+            return doPostRequest(request.getBody());
         } else if (Request.RequestMethod.GET_IMAGE.value().equals(request.getMethod())) {
             return doGetImageRequest();
         } else if (Request.RequestMethod.DOWNLOAD.value().equals(request.getMethod())) {

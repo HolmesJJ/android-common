@@ -11,14 +11,22 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.common.api.ApiClient;
+import com.example.common.api.model.mouth.MouthResult;
+import com.example.common.api.model.mouth.MouthsResult;
 import com.example.common.base.BaseViewModel;
+import com.example.common.model.mouth.Frame;
 import com.example.common.model.mouth.Mouth;
+import com.example.common.model.mouth.Mouths;
+import com.example.common.network.http.Result;
 import com.example.common.thread.ThreadManager;
 import com.example.common.utils.BitmapUtils;
 import com.example.common.utils.CameraUtils;
 import com.example.common.utils.FileUtils;
+import com.example.common.utils.ToastUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,14 +34,17 @@ import java.util.stream.Collectors;
 public class MouthViewModel extends BaseViewModel {
 
     private static final String FULL_MAX_HORIZONTAL_MOUTH = "FullMaxHMouth.jpg";
+    private static final String CROPPED_MAX_HORIZONTAL_MOUTH = "CroppedMaxHMouth.jpg";
     private static final String MAX_HORIZONTAL_MOUTH = "MaxHMouth.jpg";
     private static final String FULL_MAX_VERTICAL_MOUTH = "FullMaxVMouth.jpg";
+    private static final String CROPPED_MAX_VERTICAL_MOUTH = "CroppedMaxVMouth.jpg";
     private static final String MAX_VERTICAL_MOUTH = "MaxVMouth.jpg";
 
     private static final int STROKE_WIDTH = 3;
     private static final int RADIUS = 4;
 
     private final MutableLiveData<String> mMessage = new MutableLiveData<>();
+    private final MutableLiveData<Mouths> mMouths = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsShowLoading = new MutableLiveData<>();
 
     @Override
@@ -48,6 +59,10 @@ public class MouthViewModel extends BaseViewModel {
 
     public MutableLiveData<String> getMessage() {
         return mMessage;
+    }
+
+    public MutableLiveData<Mouths> getMouths() {
+        return mMouths;
     }
 
     public MutableLiveData<Boolean> isShowLoading() {
@@ -75,9 +90,14 @@ public class MouthViewModel extends BaseViewModel {
                     Bitmap maxHBitmap = CameraUtils.getSceneBtm(maxHMouth.getData(), maxHMouth.getWidth(), maxHMouth.getHeight());
                     Bitmap rotatedMaxHBitmap = BitmapUtils.rotateBitmap(maxHBitmap, 270, true, false);
                     BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), FULL_MAX_HORIZONTAL_MOUTH, rotatedMaxHBitmap, 100);
-                    Bitmap drawnMaxHBitmap = drawMouth(rotatedMaxHBitmap, maxHMouth.getPoints());
+                    // Black background
+                    Bitmap drawnMaxHBitmap = drawMouth(rotatedMaxHBitmap, maxHMouth.getPoints(), true, true);
                     Bitmap croppedMaxHBitmap = cropMouth(drawnMaxHBitmap);
                     BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), MAX_HORIZONTAL_MOUTH, croppedMaxHBitmap, 100);
+                    // Source bitmap
+                    Bitmap drawnMaxHSourceBitmap = drawMouth(rotatedMaxHBitmap, maxHMouth.getPoints(), true, false);
+                    Bitmap croppedMaxHSourceBitmap = cropMouth(drawnMaxHSourceBitmap);
+                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), CROPPED_MAX_HORIZONTAL_MOUTH, croppedMaxHSourceBitmap, 100);
                     // Max Vertical Distance Mouths
                     List<Mouth> sortedMaxVMouths = mouths.stream().sorted(new Comparator<Mouth>() {
                         @Override
@@ -89,20 +109,55 @@ public class MouthViewModel extends BaseViewModel {
                     Bitmap maxVBitmap = CameraUtils.getSceneBtm(maxVMouth.getData(), maxVMouth.getWidth(), maxVMouth.getHeight());
                     Bitmap rotatedMaxVBitmap = BitmapUtils.rotateBitmap(maxVBitmap, 270, true, false);
                     BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), FULL_MAX_VERTICAL_MOUTH, rotatedMaxVBitmap, 100);
-                    Bitmap drawnMaxVBitmap = drawMouth(rotatedMaxVBitmap, maxVMouth.getPoints());
+                    // Black background
+                    Bitmap drawnMaxVBitmap = drawMouth(rotatedMaxVBitmap, maxVMouth.getPoints(), true, true);
                     Bitmap croppedMaxVBitmap = cropMouth(drawnMaxVBitmap);
                     BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), MAX_VERTICAL_MOUTH, croppedMaxVBitmap, 100);
+                    // Source bitmap
+                    Bitmap drawnMaxVSourceBitmap = drawMouth(rotatedMaxVBitmap, maxVMouth.getPoints(), true, false);
+                    Bitmap croppedMaxVSourceBitmap = cropMouth(drawnMaxVSourceBitmap);
+                    BitmapUtils.savePhotoToSDCard(captureFolder.getAbsolutePath(), CROPPED_MAX_VERTICAL_MOUTH, croppedMaxVSourceBitmap, 100);
+                    // Convert to Frame
+                    List<Frame> frames = generateFrames(mouths);
+                    List<Frame> markedFrames = new ArrayList<>();
+                    markedFrames.add(frames.get(maxVMouth.getId()));
+                    markedFrames.add(frames.get(maxHMouth.getId()));
+                    Mouths mouths = new Mouths(englishId, frames, markedFrames);
+                    // Post to analysis
+                    List<String> images = new ArrayList<>();
+                    images.add(BitmapUtils.bitmapToBase64(croppedMaxVBitmap));
+                    images.add(BitmapUtils.bitmapToBase64(croppedMaxHBitmap));
+                    Result<MouthsResult> mouthsResult = ApiClient.analysisMouth(englishId, images);
+                    if (!mouthsResult.isSuccess()) {
+                        mIsShowLoading.postValue(false);
+                        ToastUtils.showShortSafe("Analysis Mouth Failed");
+                        return;
+                    }
+                    MouthsResult mouthsResultBody = mouthsResult.getBody(MouthsResult.class);
+                    List<MouthResult> mouthResultList = mouthsResultBody.getList();
+                    if (mouthResultList != null && mouthResultList.size() == 2) {
+                        MouthResult resultV = mouthResultList.get(0);
+                        frames.get(maxVMouth.getId()).setTitle("/e/").setMessage(resultV.getMessage()).setMarkedBitmap(croppedMaxVSourceBitmap).setMarked(true);
+                        MouthResult resultH = mouthResultList.get(1);
+                        frames.get(maxHMouth.getId()).setTitle("/i/").setMessage(resultH.getMessage()).setMarkedBitmap(croppedMaxHSourceBitmap).setMarked(true);
+                    }
+                    mMouths.postValue(mouths);
                 }
                 mIsShowLoading.postValue(false);
             }
         });
     }
 
-    private Bitmap drawMouth(Bitmap sourceBitmap, float[] points) {
-        Bitmap copiedBitmap = sourceBitmap.copy(sourceBitmap.getConfig(), true);
-        int width = copiedBitmap.getWidth();
-        int height = copiedBitmap.getHeight();
-        Canvas canvas = new Canvas(copiedBitmap);
+    private Bitmap drawMouth(Bitmap sourceBitmap, float[] points, boolean isCopied, boolean isDrawRect) {
+        Bitmap bitmap;
+        if (isCopied) {
+            bitmap = sourceBitmap.copy(sourceBitmap.getConfig(), true);
+        } else {
+            bitmap = sourceBitmap;
+        }
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        Canvas canvas = new Canvas(bitmap);
         Matrix matrix = new Matrix();
 
         // 正方形框
@@ -110,9 +165,11 @@ public class MouthViewModel extends BaseViewModel {
         int top = height / 8 * 5;
         int right = width / 3 * 2;
         int bottom = height / 8 * 5 + (right - left);
-        drawRectangle(canvas, matrix, left, top, right, bottom);
+        if (isDrawRect) {
+            drawRectangle(canvas, matrix, left, top, right, bottom);
+        }
         drawLip(canvas, matrix, points);
-        return copiedBitmap;
+        return bitmap;
     }
 
     private Bitmap cropMouth(Bitmap sourceBitmap) {
@@ -200,5 +257,17 @@ public class MouthViewModel extends BaseViewModel {
                 drawLine(canvas, matrix, points[i], points[i + 1], points[i + 2], points[i + 3]);
             }
         }
+    }
+
+    private List<Frame> generateFrames(List<Mouth> mouths) {
+        List<Frame> frames = new ArrayList<>();
+        for (int i = 0; i < mouths.size(); i++) {
+            Mouth mouth = mouths.get(i);
+            Bitmap sceneBtm = CameraUtils.getSceneBtm(mouth.getData(), mouth.getWidth(), mouth.getHeight());
+            Bitmap rotateFaceBtm = BitmapUtils.rotateBitmap(sceneBtm, 270, true, false);
+            Bitmap croppedMouthBitmap = cropMouth(rotateFaceBtm);
+            frames.add(new Frame(i, croppedMouthBitmap));
+        }
+        return frames;
     }
 }

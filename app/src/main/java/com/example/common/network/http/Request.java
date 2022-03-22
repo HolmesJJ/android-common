@@ -20,9 +20,13 @@ public class Request {
          */
         GET_IMAGE("GET_IMAGE"),
         /**
-         * POST方法
+         * FORM POST方法
          */
-        POST("POST"),
+        FORM_POST("FORM_POST"),
+        /**
+         * JSON POST方法
+         */
+        JSON_POST("JSON_POST"),
         /**
          * 下载
          */

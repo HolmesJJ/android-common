@@ -44,7 +44,7 @@ public class TaskAdapter extends BaseAdapter<Task> {
 
     @Override
     public RecyclerView.ViewHolder initContentViews(ViewGroup parent, int viewType) {
-        return ViewHolder.createViewHolder(getContext(), parent, R.layout.item_task);
+        return ViewHolder.createViewHolder(getContext(), parent, R.layout.layout_item_task);
     }
 
     public interface OnItemListener {

@@ -13,8 +13,8 @@
 
     <string name="copy_success">Copy Success</string>
 
+    <!--login-->
     <string name="login">Login</string>
-
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign In</string>
@@ -43,4 +43,5 @@
 
     <!--mouth-->
     <string name="mouth_out_of_bounds">Please put your mouth in the green square area</string>
+    <string name="no_warning">No warning! Excellent!</string>
 </resources>

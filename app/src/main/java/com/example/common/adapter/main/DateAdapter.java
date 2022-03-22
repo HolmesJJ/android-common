@@ -42,7 +42,7 @@ public class DateAdapter extends BaseAdapter<DateOfMonth> {
 
     @Override
     public RecyclerView.ViewHolder initContentViews(ViewGroup parent, int viewType) {
-        return ViewHolder.createViewHolder(getContext(), parent, R.layout.item_date);
+        return ViewHolder.createViewHolder(getContext(), parent, R.layout.layout_item_date);
     }
 
     public interface OnItemListener {

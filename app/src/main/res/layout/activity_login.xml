@@ -107,17 +107,17 @@
             android:layout_marginTop="@dimen/dp_32"
             android:layout_marginEnd="@dimen/dp_24"
             android:background="@drawable/bg_btn_unable_round"
+            android:fontFamily="@font/balonku_regular"
+            android:letterSpacing="0.05"
+            android:shadowColor="@color/light_gary"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
             android:stateListAnimator="@null"
             android:text="@string/action_sign_in"
             android:textColor="@color/white"
             android:textSize="@dimen/sp_20"
-            android:letterSpacing="0.05"
-            android:textStyle="bold"
-            android:fontFamily="@font/balonku_regular"
-            android:shadowColor="@color/light_gary"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"/>
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

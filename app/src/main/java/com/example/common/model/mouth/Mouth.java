@@ -6,16 +6,22 @@ import java.util.Arrays;
 
 public class Mouth {
 
+    private final int id;
     private final byte[] data;
     private final int width;
     private final int height;
     private final float[] points;
 
-    public Mouth(byte[] data, int width, int height, float[] points) {
+    public Mouth(int id, byte[] data, int width, int height, float[] points) {
+        this.id = id;
         this.data = data;
         this.width = width;
         this.height = height;
         this.points = points;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public byte[] getData() {
@@ -54,7 +60,8 @@ public class Mouth {
     @Override
     public String toString() {
         return "Mouth{" +
-                "data=" + Arrays.toString(data) +
+                "id=" + id +
+                ", data=" + Arrays.toString(data) +
                 ", width=" + width +
                 ", height=" + height +
                 ", points=" + Arrays.toString(points) +
