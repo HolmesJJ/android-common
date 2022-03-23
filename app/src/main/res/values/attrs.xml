@@ -31,4 +31,38 @@
         <attr name="bcv_corner_radius" format="dimension"/>
         <attr name="bcv_text_size" format="dimension"/>
     </declare-styleable>
+    <!--有范围拖动条-->
+    <declare-styleable name="RangeSeekBar">
+        <attr name="rsb_max" format="float"/>
+        <attr name="rsb_min" format="float"/>
+        <attr name="rsb_reserve" format="float"/>
+        <attr name="rsb_cells" format="integer"/>
+        <attr name="rsb_progress_hint_mode" format="enum">
+            <enum name="default_mode" value="0"/>
+            <enum name="always_hide" value="1"/>
+            <enum name="always_show" value="2"/>
+        </attr>
+        <attr name="rsb_line_color_selected" format="color"/>
+        <attr name="rsb_line_color_edge" format="color"/>
+        <attr name="rsb_thumb_primary_color" format="color"/>
+        <attr name="rsb_thumb_secondary_color" format="color"/>
+        <attr name="rsb_mark_text_array" format="reference"/>
+        <attr name="rsb_thumb_res_id" format="reference"/>
+        <attr name="rsb_progress_hint_res_id" format="reference"/>
+        <attr name="rsb_text_padding" format="dimension"/>
+        <attr name="rsb_text_size" format="dimension"/>
+        <attr name="rsb_hint_bg_height" format="dimension"/>
+        <attr name="rsb_hint_bg_with" format="dimension"/>
+        <attr name="rsb_hint_bg_padding" format="dimension"/>
+        <attr name="rsb_seek_bar_height" format="dimension"/>
+        <attr name="rsb_thumb_size" format="dimension"/>
+        <attr name="rsb_cell_mode" format="enum">
+            <enum name="number" value="0"/>
+            <enum name="other" value="1"/>
+        </attr>
+        <attr name="rsb_seek_bar_mode" format="enum">
+            <enum name="single" value="1"/>
+            <enum name="range" value="2"/>
+        </attr>
+    </declare-styleable>
 </resources>
