@@ -46,31 +46,39 @@ public class RangeSeekBar extends View {
     // default seekbar's padding left and right
     private int DEFAULT_PADDING_LEFT_AND_RIGHT;
     private int defaultPaddingTop;
+
     // 进度提示的背景 The background of the progress
     private int mProgressHintBGId;
+
     // 按钮的背景 The background of the Drag button
     private int mThumbResId;
+
     // 刻度模式：number根据数字实际比例排列；other 均分排列
     // Scale mode:
     // number according to the actual proportion of the number of arranged;
     // other equally arranged
     private int mCellMode;
+
     // single是Seekbar模式，range是RangeSeekbar
     // single is Seekbar mode, range is angeSeekbar
     // single = 1; range = 2
     private int mSeekBarMode;
+
     // 默认为1，当大于1时自动切回刻度模式
     // The default is 1, and when it is greater than 1,
     // it will automatically switch back to the scale mode
     private int cellsCount = 1;
+
     // 刻度与进度条间的间距
     // The spacing between the scale and the progress bar
     private int textPadding;
+
     // 进度提示背景与按钮之间的距离
     // The progress indicates the distance between the background and the button
     private int mHintBGPadding;
     private int mSeekBarHeight;
     private int mThumbSize;
+
     // 两个按钮之间的最小距离
     // The minimum distance between two buttons
     private int reserveCount;
@@ -79,16 +87,21 @@ public class RangeSeekBar extends View {
     private int heightNeeded;
     private int lineCorners;
     private int lineWidth;
+
     // 选择过的进度条颜色
     // the color of the selected progress bar
     private int colorLineSelected;
+
     // 未选则的进度条颜色
     // the color of the unselected progress bar
     private int colorLineEdge;
+
     // The foreground color of progress bar and thumb button.
     private int colorPrimary;
+
     // The background color of progress bar and thumb button.
     private int colorSecondary;
+
     // 刻度文字与提示文字的大小
     // Scale text and prompt text size
     private int mTextSize;
@@ -105,6 +118,7 @@ public class RangeSeekBar extends View {
     private float reserveValue;
     private float reservePercent;
     private float maxValue, minValue;
+
     // 真实的最大值和最小值
     // True maximum and minimum values
     private float mMin, mMax;
