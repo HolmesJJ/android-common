@@ -30,7 +30,7 @@ public class MainViewModel extends BaseViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Pair<Class<? extends BaseActivity<? extends ViewDataBinding, ? extends BaseViewModel>>, Integer>> mActivityAction = new MutableLiveData<>();
+    private final MutableLiveData<Pair<Class<? extends BaseActivity<? extends ViewDataBinding, ? extends BaseViewModel>>, Pair<Integer, String>>> mActivityAction = new MutableLiveData<>();
     private final MutableLiveData<List<Task>> mTasks = new MutableLiveData<>();
     private final MutableLiveData<Integer> mProgress = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsShowLoading = new MutableLiveData<>();
@@ -45,7 +45,7 @@ public class MainViewModel extends BaseViewModel {
 
     }
 
-    public MutableLiveData<Pair<Class<? extends BaseActivity<? extends ViewDataBinding, ? extends BaseViewModel>>, Integer>> getActivityAction() {
+    public MutableLiveData<Pair<Class<? extends BaseActivity<? extends ViewDataBinding, ? extends BaseViewModel>>, Pair<Integer, String>>> getActivityAction() {
         return mActivityAction;
     }
 
@@ -98,7 +98,7 @@ public class MainViewModel extends BaseViewModel {
         });
     }
 
-    public void download(int englishId, List<DownloadParameter> downloadParameters) {
+    public void download(int englishId, String content, List<DownloadParameter> downloadParameters) {
         mIsShowLoading.postValue(true);
         ThreadManager.getThreadPollProxy().execute(new Runnable() {
             @Override
@@ -115,7 +115,7 @@ public class MainViewModel extends BaseViewModel {
                     if (downloadResult.isTokenTimeout() || downloadResult.isForbidden()) {
                         RefreshTokenUtils.refreshToken();
                         mIsShowLoading.postValue(false);
-                        download(englishId, downloadParameters);
+                        download(englishId, content, downloadParameters);
                         return;
                     }
                     if (!downloadResult.isSuccess()) {
@@ -127,7 +127,7 @@ public class MainViewModel extends BaseViewModel {
                     }
                 }
                 mIsShowLoading.postValue(false);
-                mActivityAction.postValue(new Pair<>(SectionActivity.class, englishId));
+                mActivityAction.postValue(new Pair<>(SectionActivity.class, new Pair<>(englishId, content)));
             }
         });
     }

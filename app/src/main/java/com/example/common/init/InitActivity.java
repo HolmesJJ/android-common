@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.example.common.BR;
 import com.example.common.R;
 import com.example.common.base.BaseActivity;
+import com.example.common.config.Config;
 import com.example.common.constants.Constants;
 import com.example.common.databinding.ActivityInitBinding;
 import com.example.common.utils.ContextUtils;
@@ -47,6 +48,7 @@ public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewMode
             if (getViewModel() != null) {
                 getViewModel().initData();
             }
+            Config.setSpeechData("");
         }, PERMISSIONS, Constants.PERMISSION_REQUEST_CODE, R.string.rationale_init);
     }
 

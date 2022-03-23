@@ -65,9 +65,10 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     private boolean mIsRecording = false;
     private boolean mIsMouthOutOfBounds = false;
 
-    private int mEnglishId;
     private int mCurProgress;
     private int mMouthId;
+    private int mEnglishId;
+    private String mContent;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -90,6 +91,7 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         if (getIntent() != null && getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             mEnglishId = bundle.getInt("englishId");
+            mContent = bundle.getString("content");
         }
         if (mHandler == null) {
             mHandler = new Handler();

@@ -18,6 +18,7 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
 
     private static final String TAG = SectionActivity.class.getSimpleName();
     private int mEnglishId;
+    private String mContent;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
         if (getIntent() != null && getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             mEnglishId = bundle.getInt("englishId");
+            mContent = bundle.getString("content");
         }
     }
 
@@ -61,6 +63,7 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
             public void onMultiClick(View v) {
                 Intent intent = new Intent(ContextUtils.getContext(), TutorialActivity.class);
                 intent.putExtra("englishId", mEnglishId);
+                intent.putExtra("content", mContent);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -82,6 +85,7 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
             public void onMultiClick(View v) {
                 Intent intent = new Intent(ContextUtils.getContext(), SpeechActivity.class);
                 intent.putExtra("englishId", mEnglishId);
+                intent.putExtra("content", mContent);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -91,6 +95,7 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
             public void onMultiClick(View v) {
                 Intent intent = new Intent(ContextUtils.getContext(), MouthActivity.class);
                 intent.putExtra("englishId", mEnglishId);
+                intent.putExtra("content", mContent);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }

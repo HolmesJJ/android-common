@@ -2,6 +2,7 @@ package com.example.common.ui.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,6 +15,8 @@ import com.example.common.config.Config;
 import com.example.common.databinding.FragmentResultBinding;
 import com.example.common.ui.activity.SpeechActivity;
 import com.example.common.ui.viewmodel.ResultViewModel;
+import com.example.common.ui.widget.speech.CustomMarkerView;
+import com.example.common.utils.ContextUtils;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -26,25 +29,38 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultViewModel>
         implements SpeechActivity.ISpeechDataUpdated {
 
     private static final String TAG = ResultFragment.class.getSimpleName();
     private static final String ENGLISH_ID = "englishId";
-    private static final float BASE_LINE = 5.0f;
+    private static final String CONTENT = "content";
+    private static final float BASE_LINE = 4.8f;
+    private static final float POSITION_LINE = 15f;
+    private static final double PASS = 0.8;
 
     private final List<Double> mPoints = new ArrayList<>();
     private final List<Integer> mSplits = new ArrayList<>();
+    private final List<Integer> mPositions = new ArrayList<>();
+    private final List<Double> mScores = new ArrayList<>();
+    private final List<String> mWords = new ArrayList<>(); // No need to clear
 
     private int mEnglishId;
+    private String mContent;
+    private double mFinalScore;
 
-    public static ResultFragment newInstance(int englishId) {
+    public static ResultFragment newInstance(int englishId, String content) {
         Bundle args = new Bundle();
         ResultFragment fragment = new ResultFragment();
         args.putInt(ENGLISH_ID, englishId);
+        args.putString(CONTENT, content);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,6 +86,14 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             mEnglishId = bundle.getInt(ENGLISH_ID);
+            mContent = bundle.getString(CONTENT);
+            mWords.clear();
+            try {
+                mWords.addAll(Arrays.asList(mContent.split(",")));
+            } catch (Exception e) {
+                e.printStackTrace();
+                mWords.add(mContent);
+            }
         }
         if (getActivity() instanceof SpeechActivity) {
             SpeechActivity activity = (SpeechActivity) getActivity();
@@ -119,13 +143,13 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         }
         try {
             JSONObject jsonObject = new JSONObject(data);
-            JSONArray diff = jsonObject.getJSONArray("diff");
-            for (int i = 0; i < diff.length(); i++) {
-                mPoints.add(diff.getDouble(i));
+            JSONArray points = jsonObject.getJSONArray("diff");
+            for (int i = 0; i < points.length(); i++) {
+                mPoints.add(points.getDouble(i));
             }
-            JSONArray stepDiff = jsonObject.getJSONArray("stepDiff");
-            for (int i = 0; i < stepDiff.length(); i++) {
-                mSplits.add(stepDiff.getInt(i));
+            JSONArray splits = jsonObject.getJSONArray("stepDiff");
+            for (int i = 0; i < splits.length(); i++) {
+                mSplits.add(splits.getInt(i));
             }
             Collections.sort(mSplits);
             setData();
@@ -175,8 +199,9 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
     private void setData() {
         final ArrayList<Entry> points = new ArrayList<>();
         final ArrayList<Entry> basePoints = new ArrayList<>();
-        final ArrayList<Integer> colors = new ArrayList<>();
         final ArrayList<Entry> splits = new ArrayList<>();
+        final ArrayList<Entry> positions = new ArrayList<>();
+        final ArrayList<Integer> colors = new ArrayList<>();
 
         for (int i = 0; i < mPoints.size(); i++) {
             basePoints.add(new Entry(i, BASE_LINE, ""));
@@ -202,41 +227,66 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         }
 
         for (int i = 0; i < mSplits.size(); i++) {
-            if(i % 2 == 1) {
+            if (i % 2 == 1) {
                 int position = (mSplits.get(i - 1) + mSplits.get(i)) / 2;
+                positions.add(new Entry(position, POSITION_LINE));
+                mPositions.add(position);
+
                 double actualScore = 0;
                 double totalScore = 0;
-                for (int j = mSplits.get(i-1); j < mSplits.get(i); j++) {
+                for (int j = mSplits.get(i - 1); j < mSplits.get(i); j++) {
                     totalScore++;
-                    if(mPoints.get(j) <= 6) {
+                    if (mPoints.get(j) <= BASE_LINE) {
                         actualScore++;
                     }
                 }
+                mScores.add(actualScore / totalScore);
             }
         }
+        Log.i(TAG, "Splits: " + mSplits.toString() + ", Scores: " + mScores.toString());
+        mFinalScore = mScores.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+        int color = mFinalScore > PASS ? Color.GREEN : Color.RED;
 
-        LineDataSet pointsDataSet = new LineDataSet(points, "Standard Line");
+        LineDataSet pointsDataSet = new LineDataSet(points, getString(R.string.difference_line));
         pointsDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         pointsDataSet.setColors(colors);
         pointsDataSet.setLineWidth(1f);
         pointsDataSet.setDrawCircles(false);
+        pointsDataSet.setDrawValues(false);
 
-        LineDataSet splitsDataSet = new LineDataSet(splits, "Split Line");
+        LineDataSet splitsDataSet = new LineDataSet(splits, getString(R.string.split_line));
         splitsDataSet.setColor(Color.rgb(0, 255, 255));
         splitsDataSet.setLineWidth(1f);
         splitsDataSet.setDrawCircles(false);
         splitsDataSet.setDrawValues(false);
 
-        LineDataSet basePointsDataSet = new LineDataSet(basePoints, "Base Line");
+        LineDataSet basePointsDataSet = new LineDataSet(basePoints, getString(R.string.base_line));
         basePointsDataSet.setColor(Color.rgb(255, 208, 0));
         basePointsDataSet.setLineWidth(1f);
         basePointsDataSet.setDrawCircles(false);
         basePointsDataSet.setDrawValues(false);
 
-        LineData data = new LineData(pointsDataSet, splitsDataSet, basePointsDataSet);
+        LineDataSet positionsDataSet = new LineDataSet(positions, "");
+        positionsDataSet.setColor(Color.TRANSPARENT);
+        positionsDataSet.setLineWidth(1f);
+        positionsDataSet.setCircleColor(color);
+        positionsDataSet.setCircleHoleColor(Color.WHITE);
+        positionsDataSet.setCircleRadius(4f);
+
+        LineData data = new LineData(pointsDataSet, splitsDataSet, basePointsDataSet, positionsDataSet);
         getBinding().lcResult.setVisibleXRangeMaximum(mPoints.size());
         getBinding().lcResult.fitScreen();
         getBinding().lcResult.setData(data);
+
+        Log.i(TAG, "Words: " + mWords.toString());
+        List<String> mWordScores = IntStream.range(0, mWords.size())
+                .mapToObj(i -> mWords.get(i) + ": " + String.format(Locale.US, "%.2f", mScores.get(i) * 100) + "%")
+                .collect(Collectors.toList());
+
+        Log.i(TAG, "Words and Scores: " + mWordScores.toString());
+        CustomMarkerView cmv = new CustomMarkerView(ContextUtils.getContext(), mPositions, mWordScores, POSITION_LINE, color);
+        cmv.setChartView(getBinding().lcResult);
+        getBinding().lcResult.setMarker(cmv);
 
         XAxis xAxis = getBinding().lcResult.getXAxis();
         xAxis.setValueFormatter(new ValueFormatter() {
@@ -251,6 +301,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
                 return xLabel;
             }
         });
+
         getBinding().lcResult.notifyDataSetChanged();
         getBinding().lcResult.invalidate();
     }
@@ -258,6 +309,8 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
     private void clearData() {
         mPoints.clear();
         mSplits.clear();
+        mScores.clear();
+        mPositions.clear();
         if (getBinding().lcResult.getData() != null) {
             getBinding().lcResult.getData().clearValues();
         }

@@ -72,8 +72,9 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     private boolean mIsRGBCameraNv21Ready = false;
     private boolean mIsRecording = false;
 
-    private int mEnglishId;
     private int mCurProgress;
+    private int mEnglishId;
+    private String mContent;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -96,12 +97,14 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         if (getIntent() != null && getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             mEnglishId = bundle.getInt("englishId");
+            mContent = bundle.getString("content");
         }
         if (mHandler == null) {
             mHandler = new Handler();
         }
         initChart();
         getBinding().svOverlap.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        getBinding().cvpChart.setScanScroll(!Config.getSpeechData().equals(""));
         mFramesFolder = new File(FileUtils.FRAMES_DIR + mEnglishId);
         initCamera();
         initPlayer();
@@ -135,6 +138,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
 
     @Override
     protected void onDestroy() {
+        Config.setSpeechData("");
         listeners.clear();
         releaseCamera();
         if (mHandler != null) {
@@ -208,6 +212,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         getViewModel().getSpeechData().observe(this, speechData -> {
             Log.i(TAG, "SpeechData: " + speechData);
             Config.setSpeechData(speechData);
+            getBinding().cvpChart.setScanScroll(!Config.getSpeechData().equals(""));
             sendSpeechData(speechData);
             getBinding().cvpChart.setCurrentItem(1);
         });
@@ -296,7 +301,7 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     };
 
     private void initChart() {
-        getBinding().cvpChart.setAdapter(new ChartAdapter(getSupportFragmentManager(), mEnglishId));
+        getBinding().cvpChart.setAdapter(new ChartAdapter(getSupportFragmentManager(), mEnglishId, mContent));
         getBinding().cvpChart.setCurrentItem(0);
     }
 

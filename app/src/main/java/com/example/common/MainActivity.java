@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -109,6 +110,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     @Override
                     public void onItemListener(int position) {
                         int englishId = tasks.get(position).getEnglishId();
+                        String content = tasks.get(position).getContent();
                         if (getViewModel() != null) {
                             File videoFolder = new File(FileUtils.VIDEO_DIR, String.valueOf(englishId));
                             if (!videoFolder.exists()) {
@@ -123,7 +125,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                             downloadParameters.add(new DownloadParameter(videoFolder.getAbsolutePath(), "exercise.mp4", "englishId/" + englishId + "/exerciseVideo"));
                             downloadParameters.add(new DownloadParameter(videoFolder.getAbsolutePath(), "organ.mp4", "englishId/" + englishId + "/organVideo"));
                             downloadParameters.add(new DownloadParameter(framesFolder.getAbsolutePath(), "frames.zip", "englishId/" + englishId + "/Frames"));
-                            getViewModel().download(englishId, downloadParameters);
+                            getViewModel().download(englishId, content, downloadParameters);
                         }
                     }
                 });
@@ -147,7 +149,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 try {
                     Intent intent = new Intent(ContextUtils.getContext(), activityAction.first);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra("englishId", activityAction.second);
+                    Pair<Integer, String> english = activityAction.second;
+                    intent.putExtra("englishId", english.first);
+                    intent.putExtra("content", english.second);
                     startActivity(intent);
                 } catch (Exception e) {
                     ToastUtils.showShortSafe(e.getMessage());

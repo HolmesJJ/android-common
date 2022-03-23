@@ -16,10 +16,12 @@ public class ChartAdapter extends FragmentPagerAdapter {
     private static final int PAGE_SIZE = 5;
 
     private final int englishId;
+    private final String content;
 
-    public ChartAdapter(FragmentManager fragmentManager, int englishId) {
+    public ChartAdapter(FragmentManager fragmentManager, int englishId, String content) {
         super(fragmentManager);
         this.englishId = englishId;
+        this.content = content;
     }
 
     @NonNull
@@ -27,13 +29,13 @@ public class ChartAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 1:
-                return ResultFragment.newInstance(englishId);
+                return ResultFragment.newInstance(englishId, content);
             case 2:
-                return StandardFragment.newInstance(englishId);
+                return StandardFragment.newInstance(englishId, content);
             case 3:
-                return TestFragment.newInstance(englishId);
+                return TestFragment.newInstance(englishId, content);
             case 4:
-                return CompareFragment.newInstance(englishId);
+                return CompareFragment.newInstance(englishId, content);
             default:
                 return CoverFragment.newInstance();
         }

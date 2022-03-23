@@ -22,6 +22,7 @@ public class TutorialActivity extends BaseActivity<ActivityTutorialBinding, Tuto
 
     private static final String TAG = TutorialActivity.class.getSimpleName();
     private int mEnglishId;
+    private String mContent;
     private boolean playing = false;
 
     @Override
@@ -45,6 +46,7 @@ public class TutorialActivity extends BaseActivity<ActivityTutorialBinding, Tuto
         if (getIntent() != null && getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             mEnglishId = bundle.getInt("englishId");
+            mContent = bundle.getString("content");
         }
         initPlayer();
         playVideo("tutorial");
