@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.hardware.Camera;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -32,9 +33,11 @@ import com.example.common.ui.widget.dialog.mouth.ResultDialog;
 import com.example.common.utils.ContextUtils;
 import com.example.common.utils.FileUtils;
 import com.example.common.utils.ListenerUtils;
+import com.github.piasy.rxandroidaudio.AudioRecorder;
 import com.zeusee.main.hyperlandmark.jni.Face;
 import com.zeusee.main.hyperlandmark.jni.FaceTracking;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +48,7 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     private static final String TAG = MouthActivity.class.getSimpleName();
 
     private static final CustomThreadPool THREAD_POOL_CAMERA = new CustomThreadPool(Thread.NORM_PRIORITY);
+    private static final CustomThreadPool THREAD_POOL_RECORD = new CustomThreadPool(Thread.NORM_PRIORITY);
 
     private final Object lockObj = new Object();
     private final ArrayList<Mouth> mouths = new ArrayList<>();
@@ -56,6 +60,9 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     private GLFramebuffer mFramebuffer;
     private GLFrame mFrame;
     private GLBitmap mBitmap;
+
+    private AudioRecorder mAudioRecorder;
+    private File mAudioFile;
 
     private Handler mHandler;
 
@@ -212,16 +219,29 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        if (mIsMouthOutOfBounds) {
+                            return true;
+                        }
                         mouths.clear();
                         mMouthId = 0;
                         mIsRecording = true;
                         mHandler.postDelayed(mProgressRunnable, 50);
+                        getBinding().rlVolumeContainer.setVisibility(View.VISIBLE);
+                        mHandler.post(mVolumeRunnable);
+                        THREAD_POOL_RECORD.execute(() -> {
+                            startRecord();
+                        });
                         break;
                     case MotionEvent.ACTION_UP:
                         if (mIsRecording) {
+                            THREAD_POOL_RECORD.execute(() -> {
+                                stopRecord();
+                            });
                             mHandler.removeCallbacks(mProgressRunnable);
                             getBinding().lpvRecord.setProgress(0);
                             mCurProgress = 0;
+                            mHandler.removeCallbacks(mVolumeRunnable);
+                            getBinding().rlVolumeContainer.setVisibility(View.GONE);
                             mIsRecording = false;
                             if (getViewModel() != null) {
                                 getViewModel().process(mEnglishId, mouths);
@@ -236,6 +256,14 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
         });
     }
 
+    private final Runnable mVolumeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateVolume(getVolume());
+            mHandler.postDelayed(mVolumeRunnable, 50);
+        }
+    };
+
     private final Runnable mProgressRunnable = new Runnable() {
         @Override
         public void run() {
@@ -246,9 +274,14 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
                 mHandler.postDelayed(mProgressRunnable, 50);
             } else {
                 if (mIsRecording) {
+                    THREAD_POOL_RECORD.execute(() -> {
+                        stopRecord();
+                    });
                     mHandler.removeCallbacks(mProgressRunnable);
                     getBinding().lpvRecord.setProgress(0);
                     mCurProgress = 0;
+                    mHandler.removeCallbacks(mVolumeRunnable);
+                    getBinding().rlVolumeContainer.setVisibility(View.GONE);
                     mIsRecording = false;
                     if (getViewModel() != null) {
                         getViewModel().process(mEnglishId, mouths);
@@ -563,8 +596,72 @@ public class MouthActivity extends BaseActivity<ActivityMouthBinding, MouthViewM
     }
 
     private void showResultDialog(Mouths mouths) {
-        ResultDialog resultDialog = new ResultDialog(MouthActivity.this, mouths);
+        ResultDialog resultDialog = new ResultDialog(MouthActivity.this, mouths, mEnglishId, mContent);
         resultDialog.show();
+    }
+
+    private void startRecord() {
+        File captureFolder = new File(FileUtils.CAPTURE_DIR, String.valueOf(mEnglishId));
+        if (!captureFolder.exists()) {
+            captureFolder.mkdirs();
+        }
+        mAudioRecorder = AudioRecorder.getInstance();
+        mAudioFile = new File(captureFolder.getAbsolutePath() + "/audio.mp3");
+        mAudioRecorder.prepareRecord(
+                MediaRecorder.AudioSource.MIC,
+                MediaRecorder.OutputFormat.MPEG_4,
+                MediaRecorder.AudioEncoder.AAC,
+                mAudioFile);
+        mAudioRecorder.startRecord();
+    }
+
+    private void stopRecord() {
+        if (mAudioRecorder != null) {
+            mAudioRecorder.stopRecord();
+            mAudioRecorder = null;
+        }
+    }
+
+    // 获取音量值，只是针对录音音量
+    public int getVolume() {
+        int volume = 0;
+        // 录音
+        if (mAudioRecorder != null) {
+            volume = mAudioRecorder.getMaxAmplitude() / 650;
+            if (volume != 0) {
+                volume = (int) (10 * Math.log10(volume)) / 3;
+            }
+        }
+        return volume;
+    }
+
+    // 更新音量图
+    private void updateVolume(int volume) {
+        switch (volume) {
+            case 1:
+                getBinding().ivVolume.setImageResource(R.drawable.volume1);
+                break;
+            case 2:
+                getBinding().ivVolume.setImageResource(R.drawable.volume2);
+                break;
+            case 3:
+                getBinding().ivVolume.setImageResource(R.drawable.volume3);
+                break;
+            case 4:
+                getBinding().ivVolume.setImageResource(R.drawable.volume4);
+                break;
+            case 5:
+                getBinding().ivVolume.setImageResource(R.drawable.volume5);
+                break;
+            case 6:
+                getBinding().ivVolume.setImageResource(R.drawable.volume6);
+                break;
+            case 7:
+                getBinding().ivVolume.setImageResource(R.drawable.volume7);
+                break;
+            default:
+                break;
+        }
     }
 
     /**

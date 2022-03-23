@@ -63,11 +63,11 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
     private final List<Double> mScores = new ArrayList<>();
     private final List<String> mWords = new ArrayList<>(); // No need to clear
 
+    private SlackAudioPlayer mSlackAudioPlayer;
+
     private int mEnglishId;
     private String mContent;
     private double mFinalScore;
-
-    SlackAudioPlayer mSlackAudioPlayer;
 
     public static ResultFragment newInstance(int englishId, String content) {
         Bundle args = new Bundle();

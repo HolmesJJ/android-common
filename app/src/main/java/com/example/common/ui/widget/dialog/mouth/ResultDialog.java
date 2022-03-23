@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -21,12 +22,20 @@ import com.example.common.R;
 import com.example.common.listener.OnMultiClickListener;
 import com.example.common.model.mouth.Frame;
 import com.example.common.model.mouth.Mouths;
+import com.example.common.player.IMediaPlayer;
+import com.example.common.player.SlackAudioPlayer;
 import com.example.common.ui.widget.RoundImageView;
 import com.example.common.ui.widget.dialog.BaseDialog;
+import com.example.common.utils.ContextUtils;
+import com.example.common.utils.FileUtils;
 import com.example.common.utils.ListenerUtils;
+import com.example.common.utils.ToastUtils;
+
+import java.io.File;
 
 public class ResultDialog extends BaseDialog {
 
+    private static final String TAG = ResultDialog.class.getSimpleName();
     private final Mouths mMouths;
     private final int max;
 
@@ -38,16 +47,23 @@ public class ResultDialog extends BaseDialog {
     private RoundImageView mRivPlay;
     private Button mBtnConfirm;
 
+    private SlackAudioPlayer mSlackAudioPlayer;
+
     private Handler mHandler;
 
-    private boolean isPlaying = true;
+    private boolean isPlaying = false;
     private int mCountFrame = 0;
     private int mCountMarkedFrame = 0;
 
-    public ResultDialog(@NonNull Context context, Mouths mouths) {
+    private int mEnglishId;
+    private String mContent;
+
+    public ResultDialog(@NonNull Context context, Mouths mouths, int englishId, String content) {
         super(context);
         mMouths = mouths;
         max = mouths.getFrames().size();
+        mEnglishId = englishId;
+        mContent = content;
     }
 
     @Override
@@ -87,11 +103,17 @@ public class ResultDialog extends BaseDialog {
     @Override
     public void show() {
         super.show();
-        mHandler.post(mPlayBitmapsRunnable);
+        if (max > 0) {
+            Frame frame = mMouths.getFrames().get(0);
+            Bitmap bitmap = frame.getBitmap();
+            mIvMouth.setImageBitmap(bitmap);
+        }
+        initPlayer();
     }
 
     @Override
     public void dismiss() {
+        releasePlayer();
         if (mHandler != null) {
             mHandler.removeCallbacksAndMessages(null);
             mHandler = null;
@@ -104,6 +126,7 @@ public class ResultDialog extends BaseDialog {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onMultiClick(View v) {
+                pausePlayer();
                 mHandler.removeCallbacks(mPlayBitmapsRunnable);
                 int markedSize = mMouths.getMarkedFrames().size();
                 if (markedSize == 0) {
@@ -121,8 +144,6 @@ public class ResultDialog extends BaseDialog {
                 if (mCountMarkedFrame >= markedSize) {
                     mCountMarkedFrame = 0;
                 }
-                mRivPlay.setImageResource(R.drawable.ic_unplay);
-                mRivWarn.setImageResource(R.drawable.ic_warn);
                 isPlaying = false;
             }
         });
@@ -133,12 +154,11 @@ public class ResultDialog extends BaseDialog {
                 if (isPlaying) {
                     return;
                 }
-                mRivPlay.setImageResource(R.drawable.ic_play_mouth);
-                mRivWarn.setImageResource(R.drawable.ic_unwarn);
                 mTvTitle.setText("");
                 mTvMessage.setText("");
                 mSbProgress.setProgress(0);
                 mCountFrame = 0;
+                startPlayer();
                 mHandler.post(mPlayBitmapsRunnable);
                 isPlaying = true;
             }
@@ -172,10 +192,73 @@ public class ResultDialog extends BaseDialog {
                 mCountFrame++;
                 mSbProgress.setProgress(mCountFrame);
             }
-            if (mCountFrame >= max) {
+            if (mCountFrame < max) {
+                // TODO 目前帧率在90毫秒左右和音频差不多同步，需要进一步优化
+                mHandler.postDelayed(mPlayBitmapsRunnable, 90);
+            } else {
                 mCountFrame = 0;
+                mSbProgress.setProgress(0);
+                isPlaying = false;
             }
-            mHandler.postDelayed(mPlayBitmapsRunnable, 40);
         }
     };
+
+    private void initPlayer() {
+        File audioFile = new File(FileUtils.CAPTURE_DIR + mEnglishId + "/audio.mp3");
+        if (!audioFile.exists() || !audioFile.isFile()) {
+            mRivWarn.setImageResource(R.drawable.ic_unwarn);
+            mRivWarn.setEnabled(false);
+            mRivWarn.setClickable(false);
+            mRivPlay.setImageResource(R.drawable.ic_unplay);
+            mRivPlay.setEnabled(false);
+            mRivPlay.setClickable(false);
+            ToastUtils.showShortSafe("File not found");
+            return;
+        }
+        try {
+            mSlackAudioPlayer = new SlackAudioPlayer(ContextUtils.getContext());
+            mSlackAudioPlayer.setDataSource(audioFile.getAbsolutePath());
+            mSlackAudioPlayer.setOnMusicDurationListener(new IMediaPlayer.OnMusicDurationListener() {
+                @Override
+                public void onMusicDuration(IMediaPlayer mp, float duration) {
+                    Log.i(TAG, "onMusicDuration: " + duration);
+                }
+            });
+            mSlackAudioPlayer.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(IMediaPlayer mp) {
+                    Log.i(TAG, "onCompletion");
+                }
+            });
+            mSlackAudioPlayer.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+                @Override
+                public void onError(IMediaPlayer mp, @IMediaPlayer.AudioPlayError int what, String msg) {
+                    Log.i(TAG, "Error, what: " + what + " msg: " + msg);
+                }
+            });
+            mSlackAudioPlayer.prepareAsync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startPlayer() {
+        if (mSlackAudioPlayer != null && !mSlackAudioPlayer.isPlaying()) {
+            mSlackAudioPlayer.start();
+        }
+    }
+
+    private void pausePlayer() {
+        if (mSlackAudioPlayer != null && mSlackAudioPlayer.isPlaying()) {
+            mSlackAudioPlayer.pause();
+        }
+    }
+
+    private void releasePlayer() {
+        pausePlayer();
+        if (mSlackAudioPlayer != null) {
+            mSlackAudioPlayer.release();
+            mSlackAudioPlayer = null;
+        }
+    }
 }
