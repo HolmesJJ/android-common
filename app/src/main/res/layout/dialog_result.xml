@@ -61,7 +61,7 @@
             android:id="@+id/riv_play"
             android:layout_width="@dimen/dp_50"
             android:layout_height="@dimen/dp_50"
-            android:src="@drawable/ic_play"
+            android:src="@drawable/ic_play_mouth"
             android:layout_marginStart="@dimen/dp_20"
             android:layout_marginEnd="@dimen/dp_20"
             app:riv_border_color="@color/white"/>

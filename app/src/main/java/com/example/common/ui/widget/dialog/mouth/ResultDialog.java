@@ -133,7 +133,7 @@ public class ResultDialog extends BaseDialog {
                 if (isPlaying) {
                     return;
                 }
-                mRivPlay.setImageResource(R.drawable.ic_play);
+                mRivPlay.setImageResource(R.drawable.ic_play_mouth);
                 mRivWarn.setImageResource(R.drawable.ic_unwarn);
                 mTvTitle.setText("");
                 mTvMessage.setText("");
