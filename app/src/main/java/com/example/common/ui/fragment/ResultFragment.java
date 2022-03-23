@@ -1,9 +1,12 @@
 package com.example.common.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
@@ -13,10 +16,17 @@ import com.example.common.R;
 import com.example.common.base.BaseFragment;
 import com.example.common.config.Config;
 import com.example.common.databinding.FragmentResultBinding;
+import com.example.common.listener.OnMultiClickListener;
+import com.example.common.player.IMediaPlayer;
+import com.example.common.player.SlackAudioPlayer;
 import com.example.common.ui.activity.SpeechActivity;
 import com.example.common.ui.viewmodel.ResultViewModel;
+import com.example.common.ui.widget.RangeSeekBar;
 import com.example.common.ui.widget.speech.CustomMarkerView;
 import com.example.common.utils.ContextUtils;
+import com.example.common.utils.FileUtils;
+import com.example.common.utils.ListenerUtils;
+import com.example.common.utils.ToastUtils;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -28,6 +38,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,6 +66,8 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
     private int mEnglishId;
     private String mContent;
     private double mFinalScore;
+
+    SlackAudioPlayer mSlackAudioPlayer;
 
     public static ResultFragment newInstance(int englishId, String content) {
         Bundle args = new Bundle();
@@ -95,7 +108,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
                 mWords.add(mContent);
             }
         }
-        if (getActivity() instanceof SpeechActivity) {
+        if (getActivity() != null && getActivity() instanceof SpeechActivity) {
             SpeechActivity activity = (SpeechActivity) getActivity();
             activity.setSpeechDataUpdated(this);
         }
@@ -108,10 +121,39 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
     public void initViewObservable() {
         super.initViewObservable();
         setObserveListener();
+        setOnClickListener();
+        getBinding().rsbProgress.setOnRangeChangedListener(new RangeSeekBar.OnRangeChangedListener() {
+            @Override
+            public void onRangeChanged(RangeSeekBar view, float min, float max, boolean isFromUser, boolean changeFinished) {
+                pausePlayer();
+                if(isFromUser && changeFinished && mSlackAudioPlayer != null && !mSlackAudioPlayer.isPlaying()) {
+                    mSlackAudioPlayer.updateRange(min, max);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume");
+        initPlayer();
+        if (getActivity() != null && getActivity() instanceof SpeechActivity) {
+            SpeechActivity activity = (SpeechActivity) getActivity();
+            activity.setScanScroll(false);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        Log.i(TAG, "onPause");
+        releasePlayer();
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
+        releasePlayer();
         super.onDestroy();
     }
 
@@ -129,6 +171,39 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         getViewModel().getSpeechData().observe(this, speechData -> {
             clearData();
             initSpeechData(speechData);
+        });
+    }
+
+    private void setOnClickListener() {
+        ListenerUtils.setOnClickListener(getBinding().rivPlay, new OnMultiClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onMultiClick(View v) {
+                // TODO 需要修改一个BUG：若在移动了进度条后播放，则只能播放一次，即每次播放前都要移动一次进度条
+                startPlayer();
+            }
+        });
+        ListenerUtils.setOnClickListener(getBinding().ivForward, new OnMultiClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onMultiClick(View v) {
+                if (getActivity() != null && getActivity() instanceof SpeechActivity) {
+                    SpeechActivity activity = (SpeechActivity) getActivity();
+                    activity.forward();
+                    activity.setScanScroll(true);
+                }
+            }
+        });
+        ListenerUtils.setOnClickListener(getBinding().ivBackward, new OnMultiClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onMultiClick(View v) {
+                if (getActivity() != null && getActivity() instanceof SpeechActivity) {
+                    SpeechActivity activity = (SpeechActivity) getActivity();
+                    activity.backward();
+                    activity.setScanScroll(true);
+                }
+            }
         });
     }
 
@@ -317,5 +392,84 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         getBinding().lcResult.notifyDataSetChanged();
         getBinding().lcResult.clear();
         getBinding().lcResult.invalidate();
+    }
+
+    private void initPlayer() {
+        File audioFile = new File(FileUtils.AUDIO_DIR + mEnglishId + "/record.mp3");
+        if (!audioFile.exists() || !audioFile.isFile()) {
+            getBinding().rivPlay.setImageResource(R.drawable.ic_unplay);
+            getBinding().rivPlay.setEnabled(false);
+            getBinding().rivPlay.setClickable(false);
+            ToastUtils.showShortSafe("File not found");
+            return;
+        }
+        try {
+            mSlackAudioPlayer = new SlackAudioPlayer(ContextUtils.getContext());
+            mSlackAudioPlayer.setDataSource(audioFile.getAbsolutePath());
+            mSlackAudioPlayer.setOnMusicDurationListener(new IMediaPlayer.OnMusicDurationListener() {
+                @Override
+                public void onMusicDuration(IMediaPlayer mp, float duration) {
+                    getBinding().rsbProgress.setRange(0, duration);
+                }
+            });
+            mSlackAudioPlayer.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(IMediaPlayer mp) {
+                    Log.i(TAG, "onCompletion");
+                }
+            });
+            mSlackAudioPlayer.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+                @Override
+                public void onError(IMediaPlayer mp, @IMediaPlayer.AudioPlayError int what, String msg) {
+                    Log.i(TAG, "Error, what: " + what + " msg: " + msg);
+                }
+            });
+            mSlackAudioPlayer.prepareAsync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startPlayer() {
+        if (mSlackAudioPlayer != null && !mSlackAudioPlayer.isPlaying()) {
+            mSlackAudioPlayer.start();
+        }
+    }
+
+    private void pausePlayer() {
+        if (mSlackAudioPlayer != null && mSlackAudioPlayer.isPlaying()) {
+            mSlackAudioPlayer.pause();
+        }
+    }
+
+    private void releasePlayer() {
+        pausePlayer();
+        if (mSlackAudioPlayer != null) {
+            mSlackAudioPlayer.release();
+            mSlackAudioPlayer = null;
+        }
+    }
+
+    private void showLoading() {
+        if (getActivity() != null && getActivity() instanceof SpeechActivity) {
+            SpeechActivity activity = (SpeechActivity) getActivity();
+            activity.showLoading(false);
+        }
+    }
+
+    private void stopLoading() {
+        stopLoading(0);
+    }
+
+    private void stopLoading(long millisecond) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getActivity() != null && getActivity() instanceof SpeechActivity) {
+                    SpeechActivity activity = (SpeechActivity) getActivity();
+                    activity.stopLoading();
+                }
+            }
+        }, millisecond);
     }
 }

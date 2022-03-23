@@ -93,7 +93,7 @@ public class CompareFragment extends BaseFragment<FragmentCompareBinding, Compar
                 mWords.add(mContent);
             }
         }
-        if (getActivity() instanceof SpeechActivity) {
+        if (getActivity() != null && getActivity() instanceof SpeechActivity) {
             SpeechActivity activity = (SpeechActivity) getActivity();
             activity.setSpeechDataUpdated(this);
         }

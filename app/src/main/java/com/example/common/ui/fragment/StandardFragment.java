@@ -88,7 +88,7 @@ public class StandardFragment extends BaseFragment<FragmentStandardBinding, Stan
                 mWords.add(mContent);
             }
         }
-        if (getActivity() instanceof SpeechActivity) {
+        if (getActivity() != null && getActivity() instanceof SpeechActivity) {
             SpeechActivity activity = (SpeechActivity) getActivity();
             activity.setSpeechDataUpdated(this);
         }

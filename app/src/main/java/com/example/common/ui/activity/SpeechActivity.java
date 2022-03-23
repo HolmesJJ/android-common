@@ -61,6 +61,8 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
 
     private AudioRecorder mAudioRecorder;
 
+    private ChartAdapter mChartAdapter;
+
     private Handler mHandler;
 
     private File mFramesFolder;
@@ -104,7 +106,6 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         }
         initChart();
         getBinding().svOverlap.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        getBinding().cvpChart.setScanScroll(!Config.getSpeechData().equals(""));
         mFramesFolder = new File(FileUtils.FRAMES_DIR + mEnglishId);
         initCamera();
         initPlayer();
@@ -212,7 +213,6 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
         getViewModel().getSpeechData().observe(this, speechData -> {
             Log.i(TAG, "SpeechData: " + speechData);
             Config.setSpeechData(speechData);
-            getBinding().cvpChart.setScanScroll(!Config.getSpeechData().equals(""));
             sendSpeechData(speechData);
             getBinding().cvpChart.setCurrentItem(1);
         });
@@ -301,7 +301,8 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     };
 
     private void initChart() {
-        getBinding().cvpChart.setAdapter(new ChartAdapter(getSupportFragmentManager(), mEnglishId, mContent));
+        mChartAdapter = new ChartAdapter(getSupportFragmentManager(), mEnglishId, mContent);
+        getBinding().cvpChart.setAdapter(mChartAdapter);
         getBinding().cvpChart.setCurrentItem(0);
     }
 
@@ -496,6 +497,38 @@ public class SpeechActivity extends BaseActivity<ActivitySpeechBinding, SpeechVi
     public void sendSpeechData(String speechData) {
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).onSpeechDataUpdated(speechData);
+        }
+    }
+
+    public void setScanScroll(boolean isCanScroll) {
+        getBinding().cvpChart.setScanScroll(isCanScroll);
+    }
+
+    public void forward() {
+        if (mChartAdapter == null) {
+            return;
+        }
+        int index = getBinding().cvpChart.getCurrentItem();
+        int size = mChartAdapter.getCount();
+        if (index < size - 1) {
+            index++;
+            getBinding().cvpChart.setCurrentItem(index);
+        } else {
+            getBinding().cvpChart.setCurrentItem(0);
+        }
+    }
+
+    public void backward() {
+        if (mChartAdapter == null) {
+            return;
+        }
+        int index = getBinding().cvpChart.getCurrentItem();
+        int size = mChartAdapter.getCount();
+        if (index > 0) {
+            index--;
+            getBinding().cvpChart.setCurrentItem(index);
+        } else {
+            getBinding().cvpChart.setCurrentItem(size - 1);
         }
     }
 }

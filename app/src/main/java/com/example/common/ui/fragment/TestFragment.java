@@ -88,7 +88,7 @@ public class TestFragment extends BaseFragment<FragmentTestBinding, TestViewMode
                 mWords.add(mContent);
             }
         }
-        if (getActivity() instanceof SpeechActivity) {
+        if (getActivity() != null && getActivity() instanceof SpeechActivity) {
             SpeechActivity activity = (SpeechActivity) getActivity();
             activity.setSpeechDataUpdated(this);
         }

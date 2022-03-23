@@ -9,7 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 public class CustomViewPager extends ViewPager {
 
-    private boolean isCanScroll = true;
+    private boolean isCanScroll = false;
 
     public CustomViewPager(Context context) {
         super(context);

@@ -19,7 +19,7 @@ public class ChartAdapter extends FragmentPagerAdapter {
     private final String content;
 
     public ChartAdapter(FragmentManager fragmentManager, int englishId, String content) {
-        super(fragmentManager);
+        super(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.englishId = englishId;
         this.content = content;
     }

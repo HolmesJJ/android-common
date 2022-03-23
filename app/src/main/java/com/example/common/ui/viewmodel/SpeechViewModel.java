@@ -70,7 +70,7 @@ public class SpeechViewModel extends BaseViewModel implements OkHttpHelper.IOkHt
     }
 
     public void uploadAudio(File audioFile, int englishId) {
-        if (!audioFile.exists() || !audioFile.isFile()) {
+        if (audioFile == null || !audioFile.exists() || !audioFile.isFile()) {
             return;
         }
         mIsShowLoading.postValue(true);
