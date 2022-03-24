@@ -39,7 +39,7 @@
             android:id="@+id/sv_start"
             android:layout_width="@dimen/dp_300"
             android:layout_height="@dimen/dp_150"
-            app:sv_bg_color="@color/FFE0E5DF"
+            app:sv_bg_color="@color/FFC1CBD7"
             app:sv_src="@drawable/ic_start"
             app:sv_title="@string/start" />
 

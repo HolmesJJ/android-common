@@ -10,6 +10,7 @@ import com.example.common.base.BaseActivity;
 import com.example.common.databinding.ActivityMenuBinding;
 import com.example.common.listener.OnMultiClickListener;
 import com.example.common.ui.viewmodel.MenuViewModel;
+import com.example.common.utils.ContextUtils;
 import com.example.common.utils.ListenerUtils;
 import com.example.common.utils.ToastUtils;
 
@@ -53,7 +54,9 @@ public class MenuActivity extends BaseActivity<ActivityMenuBinding, MenuViewMode
         ListenerUtils.setOnClickListener(getBinding().svLeaderboard, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-
+                Intent intent = new Intent(ContextUtils.getContext(), LeaderboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         ListenerUtils.setOnClickListener(getBinding().svPhysicalGame, new OnMultiClickListener() {
@@ -71,7 +74,9 @@ public class MenuActivity extends BaseActivity<ActivityMenuBinding, MenuViewMode
         ListenerUtils.setOnClickListener(getBinding().svStart, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-
+                Intent intent = new Intent(ContextUtils.getContext(), GameActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }
