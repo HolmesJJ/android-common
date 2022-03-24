@@ -97,4 +97,11 @@
     <dimen name="sp_28">28sp</dimen>
     <dimen name="sp_29">29sp</dimen>
     <dimen name="sp_30">30sp</dimen>
+    <dimen name="sp_40">30sp</dimen>
+    <dimen name="sp_50">30sp</dimen>
+    <dimen name="sp_60">30sp</dimen>
+    <dimen name="sp_70">30sp</dimen>
+    <dimen name="sp_80">30sp</dimen>
+    <dimen name="sp_90">90sp</dimen>
+    <dimen name="sp_100">100sp</dimen>
 </resources>
