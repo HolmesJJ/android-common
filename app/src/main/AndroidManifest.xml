@@ -61,6 +61,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.activity.MouthActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.activity.MenuActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait" />
     </application>

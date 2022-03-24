@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.common.ui.viewmodel.MenuViewModel" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_20">
+
+        <com.example.common.ui.widget.section.SectionView
+            android:id="@+id/sv_leaderboard"
+            android:layout_width="@dimen/dp_300"
+            android:layout_height="@dimen/dp_150"
+            app:sv_bg_color="@color/FFDFD7D7"
+            app:sv_src="@drawable/ic_leaderboard"
+            app:sv_title="@string/score_panel" />
+
+        <com.example.common.ui.widget.section.SectionView
+            android:id="@+id/sv_physical_game"
+            android:layout_width="@dimen/dp_300"
+            android:layout_height="@dimen/dp_150"
+            android:layout_marginTop="@dimen/dp_30"
+            android:layout_marginBottom="@dimen/dp_30"
+            app:sv_bg_color="@color/FFCAC3BB"
+            app:sv_src="@drawable/ic_game"
+            app:sv_title="@string/physical_game" />
+
+        <com.example.common.ui.widget.section.SectionView
+            android:id="@+id/sv_start"
+            android:layout_width="@dimen/dp_300"
+            android:layout_height="@dimen/dp_150"
+            app:sv_bg_color="@color/FFE0E5DF"
+            app:sv_src="@drawable/ic_start"
+            app:sv_title="@string/start" />
+
+    </LinearLayout>
+
+</layout>

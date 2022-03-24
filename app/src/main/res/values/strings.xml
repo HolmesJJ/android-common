@@ -53,4 +53,9 @@
     <!--mouth-->
     <string name="mouth_out_of_bounds">Please put your mouth in the green square area</string>
     <string name="no_warning">No warning! Excellent!</string>
+
+    <!--menu-->
+    <string name="score_panel">Score Panel</string>
+    <string name="physical_game">Physical Game</string>
+    <string name="start">Start</string>
 </resources>

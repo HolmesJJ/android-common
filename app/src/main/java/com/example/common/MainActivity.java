@@ -22,6 +22,8 @@ import com.example.common.constants.Constants;
 import com.example.common.databinding.ActivityMainBinding;
 import com.example.common.listener.OnMultiClickListener;
 import com.example.common.model.main.DateOfMonth;
+import com.example.common.ui.activity.MenuActivity;
+import com.example.common.ui.activity.TutorialActivity;
 import com.example.common.utils.ContextUtils;
 import com.example.common.utils.DateUtils;
 import com.example.common.utils.FileUtils;
@@ -180,13 +182,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onMultiClick(View v) {
-                String packageName = "com.example.hp";
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-                if (launchIntent != null) {
-                    startActivity(launchIntent);
-                } else {
-                    ToastUtils.showShortSafe("Please launch again");
-                }
+                Intent intent = new Intent(ContextUtils.getContext(), MenuActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         ListenerUtils.setOnClickListener(getBinding().ivLeft, new OnMultiClickListener() {
