@@ -212,7 +212,7 @@ public class ResultDialog extends BaseDialog {
             mRivPlay.setImageResource(R.drawable.ic_unplay);
             mRivPlay.setEnabled(false);
             mRivPlay.setClickable(false);
-            ToastUtils.showShortSafe("File not found");
+            ToastUtils.showShortSafe("Please try exercise again");
             return;
         }
         try {

@@ -16,7 +16,7 @@ public final class RefreshTokenUtils {
     public static void refreshToken() {
         if (count == MAX_COUNT) {
             count = 0;
-            ToastUtils.showShortSafe("Refresh Token Failed");
+            ToastUtils.showShortSafe("Please refresh token again");
             Config.resetConfig();
             ActivityUtils.redirectToLogin();
         }

@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                     intent.putExtra("content", english.second);
                     startActivity(intent);
                 } catch (Exception e) {
-                    ToastUtils.showShortSafe(e.getMessage());
+                    ToastUtils.showShortSafe("Please launch again");
                 }
             } else {
                 Log.e(TAG, "activityAction is null");
@@ -172,7 +172,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 if (launchIntent != null) {
                     startActivity(launchIntent);
                 } else {
-                    ToastUtils.showShortSafe("Launch Failed");
+                    ToastUtils.showShortSafe("Please launch again");
                 }
             }
         });
@@ -185,7 +185,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 if (launchIntent != null) {
                     startActivity(launchIntent);
                 } else {
-                    ToastUtils.showShortSafe("Launch Failed");
+                    ToastUtils.showShortSafe("Please launch again");
                 }
             }
         });

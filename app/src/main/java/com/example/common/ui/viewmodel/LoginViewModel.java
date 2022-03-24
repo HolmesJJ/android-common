@@ -68,7 +68,7 @@ public class LoginViewModel extends BaseViewModel {
                 Result<LoginResult> loginResult = ApiClient.login(mUsername.get(), mPassword.get(), Config.getDeviceUUID());
                 if (!loginResult.isSuccess()) {
                     mIsShowLoading.postValue(false);
-                    ToastUtils.showShortSafe("Login Failed");
+                    ToastUtils.showShortSafe("Please login again");
                     return;
                 }
                 LoginResult loginResultBody = loginResult.getBody(LoginResult.class);
@@ -82,9 +82,9 @@ public class LoginViewModel extends BaseViewModel {
                     mActivityAction.postValue(MainActivity.class);
                 } else {
                     if (loginResultBody.getError().equals(Constants.FAILED)) {
-                        ToastUtils.showShortSafe("Login Failed");
+                        ToastUtils.showShortSafe("Please login again");
                     } else {
-                        ToastUtils.showShortSafe("Your account has been frozen");
+                        ToastUtils.showShortSafe("Please unlock your account");
                     }
                 }
             }

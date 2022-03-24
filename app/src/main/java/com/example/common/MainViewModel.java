@@ -75,7 +75,7 @@ public class MainViewModel extends BaseViewModel {
                 }
                 if (!tasksResult.isSuccess()) {
                     mIsShowLoading.postValue(false);
-                    ToastUtils.showShortSafe("Get Tasks Failed");
+                    ToastUtils.showShortSafe("Please get tasks again");
                     return;
                 }
                 TasksResult tasksResultBody = tasksResult.getBody(TasksResult.class);
@@ -119,7 +119,7 @@ public class MainViewModel extends BaseViewModel {
                         return;
                     }
                     if (!downloadResult.isSuccess()) {
-                        ToastUtils.showShortSafe( "Download " + file + " Failed");
+                        ToastUtils.showShortSafe( "Please download " + file + " again");
                         return;
                     }
                     if (file.contains(".zip")) {

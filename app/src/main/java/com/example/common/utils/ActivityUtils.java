@@ -47,7 +47,7 @@ public final class ActivityUtils {
                 context.startActivity(intent);
                 context.finish();
             } catch (Exception e) {
-                ToastUtils.showShortSafe(e.getMessage());
+                ToastUtils.showShortSafe("Please launch again");
             }
         }
     }

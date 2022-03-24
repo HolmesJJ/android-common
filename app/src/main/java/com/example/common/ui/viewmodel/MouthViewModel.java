@@ -130,7 +130,7 @@ public class MouthViewModel extends BaseViewModel {
 //                    Result<MouthsResult> mouthsResult = ApiClient.analysisMouth(englishId, images);
 //                    if (!mouthsResult.isSuccess()) {
 //                        mIsShowLoading.postValue(false);
-//                        ToastUtils.showShortSafe("Analysis Mouth Failed");
+//                        ToastUtils.showShortSafe("Please try exercise again");
 //                        return;
 //                    }
 //                    MouthsResult mouthsResultBody = mouthsResult.getBody(MouthsResult.class);

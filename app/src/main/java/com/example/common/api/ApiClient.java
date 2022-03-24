@@ -11,6 +11,7 @@ import com.example.common.api.model.login.PublicKeyResult;
 import com.example.common.api.model.main.DownloadResult;
 import com.example.common.api.model.main.TasksResult;
 import com.example.common.api.model.mouth.MouthsResult;
+import com.example.common.api.model.speech.UploadResult;
 import com.example.common.api.model.token.RefreshTokenResult;
 import com.example.common.api.model.tutorial.EnglishResult;
 import com.example.common.config.Config;
@@ -108,6 +109,22 @@ public final class ApiClient {
         Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/english/" + englishId)
                 .setHeaderMap(headers)
                 .setMethod(Request.RequestMethod.GET.value());
+        return ExecutorRequest.execute(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static Result<UploadResult> upload(int englishId, int score) {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "bearer " + Config.getToken());
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("userId", String.valueOf(Config.getUserId()));
+        parameters.put("englishId", String.valueOf(englishId));
+        parameters.put("grade", String.valueOf(score));
+        Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/finishProgress")
+                .setHeaderMap(headers)
+                .setMethod(Request.RequestMethod.FORM_POST.value())
+                .setBody(parameters);
         return ExecutorRequest.execute(request);
     }
 

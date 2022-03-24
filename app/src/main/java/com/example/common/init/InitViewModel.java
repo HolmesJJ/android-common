@@ -53,13 +53,13 @@ public class InitViewModel extends BaseViewModel {
                 Result<PublicKeyResult> publicKeyResult = ApiClient.getPublicKey();
                 if (!publicKeyResult.isSuccess()) {
                     mIsInitSuccess.postValue(false);
-                    ToastUtils.showShortSafe("Public Key is Invalid");
+                    ToastUtils.showShortSafe("Please get public Key again");
                     return;
                 }
                 PublicKeyResult publicKeyResultBody = publicKeyResult.getBody(PublicKeyResult.class);
                 if (!publicKeyResultBody.getStatus().equals(Constants.SUCCESS)) {
                     mIsInitSuccess.postValue(false);
-                    ToastUtils.showShortSafe("Public Key is Invalid");
+                    ToastUtils.showShortSafe("Please get public Key again");
                     return;
                 }
                 Config.setPublicKey(publicKeyResultBody.getPublicKey());

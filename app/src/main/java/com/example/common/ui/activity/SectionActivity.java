@@ -76,7 +76,7 @@ public class SectionActivity extends BaseActivity<ActivitySectionBinding, Sectio
                 if (launchIntent != null) {
                     startActivity(launchIntent);
                 } else {
-                    ToastUtils.showShortSafe("Launch Failed");
+                    ToastUtils.showShortSafe("Please launch again");
                 }
             }
         });

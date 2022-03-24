@@ -67,7 +67,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
 
     private int mEnglishId;
     private String mContent;
-    private double mFinalScore;
+    private int mFinalScore;
 
     public static ResultFragment newInstance(int englishId, String content) {
         Bundle args = new Bundle();
@@ -122,15 +122,8 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         super.initViewObservable();
         setObserveListener();
         setOnClickListener();
-        getBinding().rsbProgress.setOnRangeChangedListener(new RangeSeekBar.OnRangeChangedListener() {
-            @Override
-            public void onRangeChanged(RangeSeekBar view, float min, float max, boolean isFromUser, boolean changeFinished) {
-                pausePlayer();
-                if(isFromUser && changeFinished && mSlackAudioPlayer != null && !mSlackAudioPlayer.isPlaying()) {
-                    mSlackAudioPlayer.updateRange(min, max);
-                }
-            }
-        });
+        setOnRangeChangedListener();
+        doIsShowLoading();
     }
 
     @Override
@@ -170,7 +163,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         }
         getViewModel().getSpeechData().observe(this, speechData -> {
             clearData();
-            initSpeechData(speechData);
+            initSpeechData(speechData, true);
         });
     }
 
@@ -207,12 +200,24 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         });
     }
 
-    private void initSpeechData() {
-        String data = Config.getSpeechData();
-        initSpeechData(data);
+    private void setOnRangeChangedListener() {
+        getBinding().rsbProgress.setOnRangeChangedListener(new RangeSeekBar.OnRangeChangedListener() {
+            @Override
+            public void onRangeChanged(RangeSeekBar view, float min, float max, boolean isFromUser, boolean changeFinished) {
+                pausePlayer();
+                if(isFromUser && changeFinished && mSlackAudioPlayer != null && !mSlackAudioPlayer.isPlaying()) {
+                    mSlackAudioPlayer.updateRange(min, max);
+                }
+            }
+        });
     }
 
-    private void initSpeechData(String data) {
+    private void initSpeechData() {
+        String data = Config.getSpeechData();
+        initSpeechData(data, false);
+    }
+
+    private void initSpeechData(String data, boolean isUpload) {
         if (data.equals("")) {
             return;
         }
@@ -227,7 +232,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
                 mSplits.add(splits.getInt(i));
             }
             Collections.sort(mSplits);
-            setData();
+            setData(isUpload);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -271,7 +276,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         rightAxis.setEnabled(false);
     }
 
-    private void setData() {
+    private void setData(boolean isUpload) {
         final ArrayList<Entry> points = new ArrayList<>();
         final ArrayList<Entry> basePoints = new ArrayList<>();
         final ArrayList<Entry> splits = new ArrayList<>();
@@ -319,7 +324,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
             }
         }
         Log.i(TAG, "Splits: " + mSplits.toString() + ", Scores: " + mScores.toString());
-        mFinalScore = mScores.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+        mFinalScore = (int) (mScores.stream().mapToDouble(Double::doubleValue).average().orElse(0) * 100);
         int color = mFinalScore > PASS ? Color.GREEN : Color.RED;
 
         LineDataSet pointsDataSet = new LineDataSet(points, getString(R.string.difference_line));
@@ -379,6 +384,10 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
 
         getBinding().lcResult.notifyDataSetChanged();
         getBinding().lcResult.invalidate();
+
+        if (isUpload && getViewModel() != null) {
+            getViewModel().uploadScore(mEnglishId, mFinalScore);
+        }
     }
 
     private void clearData() {
@@ -400,7 +409,7 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
             getBinding().rivPlay.setImageResource(R.drawable.ic_unplay);
             getBinding().rivPlay.setEnabled(false);
             getBinding().rivPlay.setClickable(false);
-            ToastUtils.showShortSafe("File not found");
+            ToastUtils.showShortSafe("Please try exercise again");
             return;
         }
         try {
@@ -450,10 +459,10 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
         }
     }
 
-    private void showLoading() {
+    private void showLoading(boolean canCancel) {
         if (getActivity() != null && getActivity() instanceof SpeechActivity) {
             SpeechActivity activity = (SpeechActivity) getActivity();
-            activity.showLoading(false);
+            activity.showLoading(canCancel);
         }
     }
 
@@ -471,5 +480,21 @@ public class ResultFragment extends BaseFragment<FragmentResultBinding, ResultVi
                 }
             }
         }, millisecond);
+    }
+
+    /**
+     * 控制进度圈显示
+     */
+    private void doIsShowLoading() {
+        if (getViewModel() == null) {
+            return;
+        }
+        getViewModel().isShowLoading().observe(this, isShowing -> {
+            if (isShowing) {
+                showLoading(false);
+            } else {
+                stopLoading();
+            }
+        });
     }
 }

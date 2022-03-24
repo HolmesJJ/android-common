@@ -110,7 +110,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
                     startActivity(intent);
                     finish();
                 } catch (Exception e) {
-                    ToastUtils.showShortSafe(e.getMessage());
+                    ToastUtils.showShortSafe("Please launch again");
                 }
             } else {
                 Log.e(TAG, "activityAction is null");

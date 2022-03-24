@@ -37,7 +37,7 @@ public class SpeechViewModel extends BaseViewModel implements OkHttpHelper.IOkHt
     public void onFailure(@NonNull Call call, @NonNull IOException e) {
         mIsShowLoading.postValue(false);
         e.printStackTrace();
-        ToastUtils.showShortSafe("Speech Analysis Failed");
+        ToastUtils.showShortSafe("Please try exercise again");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class SpeechViewModel extends BaseViewModel implements OkHttpHelper.IOkHt
         mIsShowLoading.postValue(false);
         ResponseBody responseBody = response.body();
         if (responseBody == null) {
-            ToastUtils.showShortSafe("Speech Analysis Failed");
+            ToastUtils.showShortSafe("Please try exercise again");
             return;
         }
         try {
@@ -53,7 +53,7 @@ public class SpeechViewModel extends BaseViewModel implements OkHttpHelper.IOkHt
             mSpeechData.postValue(result);
         } catch (Exception e) {
             e.printStackTrace();
-            ToastUtils.showShortSafe("Speech Analysis Failed");
+            ToastUtils.showShortSafe("Please try exercise again");
         }
     }
 

@@ -49,7 +49,7 @@ public class TutorialViewModel extends BaseViewModel {
                 }
                 if (!englishResult.isSuccess()) {
                     mIsShowLoading.postValue(false);
-                    ToastUtils.showShortSafe("Get English Failed");
+                    ToastUtils.showShortSafe("Please get task content again");
                     return;
                 }
                 EnglishResult englishResultBody = englishResult.getBody(EnglishResult.class);
