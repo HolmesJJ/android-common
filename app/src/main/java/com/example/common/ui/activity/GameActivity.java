@@ -76,6 +76,12 @@ public class GameActivity extends BaseActivity<ActivityGameBinding, GameViewMode
         });
     }
 
+    public void uploadScore(int score) {
+        if (getViewModel() != null) {
+            getViewModel().uploadScore(score);
+        }
+    }
+
     @SuppressLint("ResourceType")
     public void updateStatusBar(boolean isShowed) {
         Window window = getWindow();

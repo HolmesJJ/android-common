@@ -406,7 +406,7 @@ public class MoveControl implements ITouchControl {
             mTimer.cancel();
             mTimer = null;
             if (hasWrong) {
-                // updateGameLeaderboard();
+                mActivity.uploadScore(score);
                 mRlGifContainer.setVisibility(View.VISIBLE);
                 mGivTryAgain.setVisibility(View.VISIBLE);
                 mActivity.updateStatusBar(true);

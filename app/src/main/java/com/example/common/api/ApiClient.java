@@ -4,7 +4,7 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
-import com.alibaba.fastjson.JSON;
+import com.example.common.api.model.game.LeaderboardResult;
 import com.example.common.api.model.login.DeviceUUIDResult;
 import com.example.common.api.model.login.LoginResult;
 import com.example.common.api.model.login.PublicKeyResult;
@@ -20,7 +20,6 @@ import com.example.common.network.http.Request;
 import com.example.common.network.http.Result;
 import com.example.common.utils.RSAUtils;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,6 +72,32 @@ public final class ApiClient {
         parameters.put("deviceId", RSAUtils.encryptByPublicKey(deviceId, Config.getPublicKey()));
         parameters.put("grant_type", "password");
         Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/login")
+                .setMethod(Request.RequestMethod.FORM_POST.value())
+                .setBody(parameters);
+        return ExecutorRequest.execute(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static Result<LeaderboardResult> getLeaderboard() {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "bearer " + Config.getToken());
+        Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/cubeHubLeaderboard")
+                .setHeaderMap(headers)
+                .setMethod(Request.RequestMethod.GET.value());
+        return ExecutorRequest.execute(request);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static Result<UploadResult> upload(int score) {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "bearer " + Config.getToken());
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("userId", RSAUtils.encryptByPublicKey(String.valueOf(Config.getUserId()), Config.getPublicKey()));
+        parameters.put("score", RSAUtils.encryptByPublicKey(String.valueOf(score), Config.getPublicKey()));
+        Request request = new Request().setPath(Constants.HTTPS_SERVER_URL + "api/cubeHubScore")
+                .setHeaderMap(headers)
                 .setMethod(Request.RequestMethod.FORM_POST.value())
                 .setBody(parameters);
         return ExecutorRequest.execute(request);
