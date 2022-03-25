@@ -37,13 +37,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private DateAdapter mDateAdapter;
+    private TaskAdapter mTaskAdapter;
+    private Handler mHandler;
+
     private long mCurrentTime = System.currentTimeMillis();
     private int mSelectedDate;
     private int mCurProgress;
     private int mMaxProgress;
-    private DateAdapter mDateAdapter;
-    private TaskAdapter mTaskAdapter;
-    private Handler mHandler;
+
+    List<DateOfMonth> mDatesOfMonth;
 
     @Override
     public int initContentView(Bundle savedInstanceState) {
@@ -138,6 +141,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         });
         getViewModel().getProgress().observe(this, progress -> {
             if (progress != null) {
+                if (progress > 0) {
+                    getBinding().llNotCheckIn.setVisibility(View.GONE);
+                    getBinding().llCheckIn.setVisibility(View.VISIBLE);
+                }
                 mMaxProgress = progress;
                 mCurProgress = 0;
                 if (mHandler != null) {
@@ -212,8 +219,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 mCurrentTime = DateUtils.nextMonth(mCurrentTime);
                 String monthYear = DateUtils.getMonth(mCurrentTime) + " " + DateUtils.getYear(mCurrentTime);
                 getBinding().tvCurrentMonth.setText(monthYear);
-                List<DateOfMonth> datesOfMonth = DateUtils.getDatesOfMonth(mCurrentTime);
-                mDateAdapter.setData(datesOfMonth);
+                mDatesOfMonth = DateUtils.getDatesOfMonth(mCurrentTime);
+                mDateAdapter.setData(mDatesOfMonth);
                 mDateAdapter.notifyDataSetChanged();
                 isRightVisited();
             }
