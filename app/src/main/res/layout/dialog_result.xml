@@ -71,7 +71,7 @@
 
     <Button
         android:id="@+id/btn_confirm"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/dp_260"
         android:layout_height="@dimen/dp_60"
         android:layout_marginTop="@dimen/dp_32"
         android:background="@drawable/bg_btn_confirm_round"

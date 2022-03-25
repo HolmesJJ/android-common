@@ -57,5 +57,8 @@ ext {
 
             // okhttp
             "okhttp"                      : "com.squareup.okhttp3:okhttp:4.9.3",
+
+            // gif
+            "gif"                         : "pl.droidsonroids.gif:android-gif-drawable:1.2.24",
     ]
 }

@@ -120,30 +120,37 @@ public class MouthViewModel extends BaseViewModel {
                     // Convert to Frame
                     List<Frame> frames = generateFrames(mouths);
                     List<Frame> markedFrames = new ArrayList<>();
-                    markedFrames.add(frames.get(maxVMouth.getId()));
-                    markedFrames.add(frames.get(maxHMouth.getId()));
                     Mouths mouths = new Mouths(englishId, frames, markedFrames);
                     // Post to analysis
-//                    List<String> images = new ArrayList<>();
-//                    images.add(BitmapUtils.bitmapToBase64(croppedMaxVBitmap));
-//                    images.add(BitmapUtils.bitmapToBase64(croppedMaxHBitmap));
-//                    Result<MouthsResult> mouthsResult = ApiClient.analysisMouth(englishId, images);
-//                    if (!mouthsResult.isSuccess()) {
-//                        mIsShowLoading.postValue(false);
-//                        ToastUtils.showShortSafe("Please try exercise again");
-//                        return;
-//                    }
-//                    MouthsResult mouthsResultBody = mouthsResult.getBody(MouthsResult.class);
-//                    List<MouthResult> mouthResultList = mouthsResultBody.getList();
-//                    if (mouthResultList != null && mouthResultList.size() == 2) {
-//                        MouthResult resultV = mouthResultList.get(0);
-//                        frames.get(maxVMouth.getId()).setTitle("/e/").setMessage(resultV.getMessage()).setMarkedBitmap(croppedMaxVSourceBitmap).setMarked(true);
-//                        MouthResult resultH = mouthResultList.get(1);
-//                        frames.get(maxHMouth.getId()).setTitle("/i/").setMessage(resultH.getMessage()).setMarkedBitmap(croppedMaxHSourceBitmap).setMarked(true);
-//                    }
+                    List<String> images = new ArrayList<>();
+                    images.add(BitmapUtils.bitmapToBase64(croppedMaxVBitmap));
+                    images.add(BitmapUtils.bitmapToBase64(croppedMaxHBitmap));
+                    Result<MouthsResult> mouthsResult = ApiClient.analysisMouth(englishId, images);
+                    if (!mouthsResult.isSuccess()) {
+                        mIsShowLoading.postValue(false);
+                        ToastUtils.showShortSafe("Please try exercise again");
+                        return;
+                    }
+                    MouthsResult mouthsResultBody = mouthsResult.getBody(MouthsResult.class);
+                    List<MouthResult> mouthResultList = mouthsResultBody.getList();
+                    if (mouthResultList != null && mouthResultList.size() == 2) {
+                        MouthResult resultV = mouthResultList.get(0);
+                        // 1 is normal
+                        if (resultV.getId() != 1) {
+                            markedFrames.add(frames.get(maxVMouth.getId()));
+                            String messageV = "Too " + resultV.getMessage().toLowerCase() + " on up and down";
+                            frames.get(maxVMouth.getId()).setTitle("/e/").setMessage(messageV).setMarkedBitmap(croppedMaxVSourceBitmap).setMarked(true);
+                        }
+                        MouthResult resultH = mouthResultList.get(1);
+//                        if (resultH.getId() != 1) {
+//                            markedFrames.add(frames.get(maxHMouth.getId()));
+//                            String messageH = "Too " + resultV.getMessage().toLowerCase() + " on left and right";
+//                            frames.get(maxHMouth.getId()).setTitle("/i/").setMessage(messageH).setMarkedBitmap(croppedMaxHSourceBitmap).setMarked(true);
+//                        }
+                    }
                      // Hardcode for testing
-                    frames.get(maxVMouth.getId()).setTitle("/e/").setMessage("Too big on up and down").setMarkedBitmap(croppedMaxVSourceBitmap).setMarked(true);
-                    frames.get(maxHMouth.getId()).setTitle("/i/").setMessage("Too wide on left and right").setMarkedBitmap(croppedMaxHSourceBitmap).setMarked(true);
+//                    frames.get(maxVMouth.getId()).setTitle("/e/").setMessage("Too big on up and down").setMarkedBitmap(croppedMaxVSourceBitmap).setMarked(true);
+//                    frames.get(maxHMouth.getId()).setTitle("/i/").setMessage("Too wide on left and right").setMarkedBitmap(croppedMaxHSourceBitmap).setMarked(true);
                     mMouths.postValue(mouths);
                 }
                 mIsShowLoading.postValue(false);

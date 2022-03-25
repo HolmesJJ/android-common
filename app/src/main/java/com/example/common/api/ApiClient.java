@@ -20,6 +20,7 @@ import com.example.common.network.http.Request;
 import com.example.common.network.http.Result;
 import com.example.common.utils.RSAUtils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -131,10 +132,10 @@ public final class ApiClient {
     @SuppressWarnings("unchecked")
     @NonNull
     public static Result<MouthsResult> analysisMouth(int englishId, List<String> images) {
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("englishId", String.valueOf(englishId));
-        parameters.put("images", JSON.toJSONString(images));
-        Request request = new Request().setPath(Constants.ANALYSIS_SERVER_URL + "api/analysis")
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("englishId", englishId);
+        parameters.put("images", images.toArray(new String[0]));
+        Request request = new Request().setPath(Constants.ANALYSIS_SERVER_URL + "predict")
                 .setMethod(Request.RequestMethod.JSON_POST.value())
                 .setBody(parameters);
         return ExecutorRequest.execute(request);

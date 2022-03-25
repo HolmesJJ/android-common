@@ -58,4 +58,10 @@
     <string name="score_panel">Score Panel</string>
     <string name="physical_game">Physical Game</string>
     <string name="start">Start</string>
+
+    <!--game-->
+    <string name="scores">scores:</string>
+    <string name="ready">Ready</string>
+    <string name="start_time">00:30</string>
+    <string name="end_time">00:00</string>
 </resources>

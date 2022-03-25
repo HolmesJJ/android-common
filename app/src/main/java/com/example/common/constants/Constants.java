@@ -8,7 +8,7 @@ public final class Constants {
 
     // Server
     public static final String HTTPS_SERVER_URL = "https://www.deaftalk.top/";
-    public static final String ANALYSIS_SERVER_URL = "http://localhost/";
+    public static final String ANALYSIS_SERVER_URL = "http://8.214.14.29:8008/";
 
     private Constants() {
     }

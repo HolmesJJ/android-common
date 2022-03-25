@@ -8,15 +8,221 @@
             type="com.example.common.ui.viewmodel.GameViewModel" />
     </data>
 
-    <LinearLayout
-        android:id="@+id/ll_container"
+    <RelativeLayout
+        android:id="@+id/rl_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/dp_20">
+        android:background="@color/white">
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_score_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_20"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_10"
+                android:text="@string/scores"
+                android:textStyle="bold"
+                android:textSize="@dimen/sp_30"
+                android:fontFamily="@font/balonku_regular"/>
+
+            <TextView
+                android:id="@+id/tv_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textStyle="bold"
+                android:textSize="@dimen/sp_30"
+                android:fontFamily="@font/balonku_regular" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_cube_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_score_container"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/dp_30"
+            android:background="@drawable/bg_solid_corner">
+
+            <View
+                android:id="@+id/v_top_middle_cube"
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_70"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginEnd="@dimen/dp_15"
+                android:layout_marginBottom="@dimen/dp_25"
+                android:background="@drawable/bg_solid_corner" />
+
+            <View
+                android:id="@+id/v_top_left_cube"
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_70"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_25"
+                android:layout_toStartOf="@+id/v_top_middle_cube"
+                android:background="@drawable/bg_solid_corner" />
+
+            <View
+                android:id="@+id/v_top_right_cube"
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_70"
+                android:layout_marginTop="@dimen/dp_20"
+                android:layout_marginBottom="@dimen/dp_25"
+                android:layout_toEndOf="@+id/v_top_middle_cube"
+                android:background="@drawable/bg_solid_corner" />
+
+            <View
+                android:id="@+id/v_bottom_middle_cube"
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_70"
+                android:layout_below="@+id/v_top_middle_cube"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_25"
+                android:layout_marginEnd="@dimen/dp_15"
+                android:layout_marginBottom="@dimen/dp_20"
+                android:background="@drawable/bg_dotted_corner" />
+
+            <View
+                android:id="@+id/v_bottom_left_cube"
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_70"
+                android:layout_below="@+id/v_top_left_cube"
+                android:layout_marginTop="@dimen/dp_25"
+                android:layout_toStartOf="@+id/v_bottom_middle_cube"
+                android:background="@drawable/bg_dotted_corner" />
+
+            <View
+                android:id="@+id/v_bottom_right_cube"
+                android:layout_width="@dimen/dp_70"
+                android:layout_height="@dimen/dp_70"
+                android:layout_below="@+id/v_top_right_cube"
+                android:layout_marginTop="@dimen/dp_25"
+                android:layout_toEndOf="@+id/v_bottom_middle_cube"
+                android:background="@drawable/bg_dotted_corner" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_70"
+                android:layout_below="@+id/v_top_left_cube"
+                android:layout_marginTop="@dimen/dp_25"
+                android:layout_marginEnd="@dimen/dp_15"
+                android:layout_toStartOf="@+id/v_bottom_left_cube"
+                android:text="/"
+                android:textSize="50sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dp_70"
+                android:layout_below="@+id/v_top_right_cube"
+                android:layout_marginStart="@dimen/dp_15"
+                android:layout_marginTop="@dimen/dp_25"
+                android:layout_toEndOf="@+id/v_bottom_right_cube"
+                android:text="/"
+                android:textSize="50sp" />
+
+            <com.example.common.ui.widget.game.MoveTextView
+                android:id="@+id/mtv_left"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                android:background="@color/FFC1CBD7"
+                android:fontFamily="@font/balonku_regular"
+                android:gravity="center"
+                android:textSize="@dimen/sp_30"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <com.example.common.ui.widget.game.MoveTextView
+                android:id="@+id/mtv_middle"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                android:background="@color/FFC1CBD7"
+                android:fontFamily="@font/balonku_regular"
+                android:gravity="center"
+                android:textSize="@dimen/sp_30"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <com.example.common.ui.widget.game.MoveTextView
+                android:id="@+id/mtv_right"
+                android:layout_width="@dimen/dp_60"
+                android:layout_height="@dimen/dp_60"
+                android:background="@color/FFC1CBD7"
+                android:fontFamily="@font/balonku_regular"
+                android:gravity="center"
+                android:textSize="@dimen/sp_30"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_20"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/rl_cube_container"
+            android:text="@string/ready"
+            android:textStyle="bold"
+            android:textSize="@dimen/sp_50"
+            android:fontFamily="@font/balonku_regular"/>
+
+        <TextView
+            android:id="@+id/tv_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_status"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp_80"
+            android:fontFamily="@font/balonku_regular"
+            android:text="@string/start_time"
+            android:textSize="@dimen/sp_50"
+            android:textStyle="bold" />
+
+        <com.example.common.ui.widget.RoundImageView
+            android:id="@+id/riv_start"
+            android:layout_width="@dimen/dp_80"
+            android:layout_height="@dimen/dp_80"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/tv_timer"
+            android:src="@drawable/ic_play_game"
+            app:riv_border_color="@color/white"/>
+
+        <RelativeLayout
+            android:id="@+id/gif_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/shade"
+            android:visibility="gone">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/well_done"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/well_done"
+                android:background="@android:color/transparent"
+                android:visibility="gone"/>
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/try_again"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/try_again"
+                android:background="@android:color/transparent"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </layout>
