@@ -142,11 +142,11 @@ public class MouthViewModel extends BaseViewModel {
                             frames.get(maxVMouth.getId()).setTitle("/e/").setMessage(messageV).setMarkedBitmap(croppedMaxVSourceBitmap).setMarked(true);
                         }
                         MouthResult resultH = mouthResultList.get(1);
-//                        if (resultH.getId() != 1) {
-//                            markedFrames.add(frames.get(maxHMouth.getId()));
-//                            String messageH = "Too " + resultV.getMessage().toLowerCase() + " on left and right";
-//                            frames.get(maxHMouth.getId()).setTitle("/i/").setMessage(messageH).setMarkedBitmap(croppedMaxHSourceBitmap).setMarked(true);
-//                        }
+                        if (resultH.getId() != 1) {
+                            markedFrames.add(frames.get(maxHMouth.getId()));
+                            String messageH = "Too " + resultH.getMessage().toLowerCase() + " on left and right";
+                            frames.get(maxHMouth.getId()).setTitle("/i/").setMessage(messageH).setMarkedBitmap(croppedMaxHSourceBitmap).setMarked(true);
+                        }
                     }
                      // Hardcode for testing
 //                    frames.get(maxVMouth.getId()).setTitle("/e/").setMessage("Too big on up and down").setMarkedBitmap(croppedMaxVSourceBitmap).setMarked(true);
