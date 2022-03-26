@@ -131,6 +131,7 @@ public class ResultDialog extends BaseDialog {
                 int markedSize = mMouths.getMarkedFrames().size();
                 if (markedSize == 0) {
                     mTvTitle.setText(R.string.no_warning);
+                    isPlaying = false;
                     return;
                 }
                 if (mCountMarkedFrame < markedSize) {
