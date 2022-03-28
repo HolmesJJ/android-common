@@ -92,10 +92,11 @@
 
                         <ImageView
                             android:id="@+id/iv_mouth_frame"
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/dp_100"
+                            android:layout_width="@dimen/dp_150"
+                            android:layout_height="@dimen/dp_150"
+                            android:scaleType="fitCenter"
                             android:layout_centerHorizontal="true"
-                            android:layout_marginTop="@dimen/dp_30" />
+                            android:layout_marginTop="@dimen/dp_10" />
 
                         <com.example.common.ui.widget.LongPressView
                             android:id="@+id/lpv_record"
