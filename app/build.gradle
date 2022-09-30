@@ -70,6 +70,17 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
+    flavorDimensions "app"
+    productFlavors {
+        common {
+            versionCode 1
+            versionName "1.0"
+            // Assigns this product flavor to the "version" flavor dimension.
+            // This property is optional if you are using only one dimension.
+            dimension "app"
+            applicationId = "com.example.common"
+        }
+    }
 }
 
 configurations.all {
